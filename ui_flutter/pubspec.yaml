@@ -54,7 +54,7 @@ dependencies:
   firebase_app_installations: ^0.2.4+16
   firebase_ml_model_downloader: ^0.2.4+15
   firebase_performance: ^0.9.3+16
-  firebase_database: ^10.4.8
+  firebase_database: ^10.4.10
   firebase_remote_config: ^4.3.16
   universal_html: ^2.2.4
   html: ^0.15.4
