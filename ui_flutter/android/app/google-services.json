@@ -1,0 +1,65 @@
+{
+  "project_info": {
+    "project_number": "1097359980771",
+    "firebase_url": "https://sms-app-project-415923-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "sms-app-project-415923",
+    "storage_bucket": "sms-app-project-415923.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1097359980771:android:b9653fd09a61c18de02dd6",
+        "android_client_info": {
+          "package_name": "com.example.flutter_app_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2S52QCyAmwho-aFbuHEi--3NbrxPHMAk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1097359980771-se9m5vjjeh9c8qhvcdm6gq6m5krm1phd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "smsappios"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1097359980771:android:aa0669b5f32f3f9de02dd6",
+        "android_client_info": {
+          "package_name": "com.example.ui_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2S52QCyAmwho-aFbuHEi--3NbrxPHMAk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1097359980771-se9m5vjjeh9c8qhvcdm6gq6m5krm1phd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "smsappios"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

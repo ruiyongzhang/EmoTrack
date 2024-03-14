@@ -1,0 +1,21 @@
+runtime: python312
+env: standard
+entrypoint: gunicorn -b :$PORT main:app
+
+# runtime_config:
+#     operating_system: "ubuntu22"
+#     runtime_version: "3.12"
+
+# service: backend-service
+instance_class: F1 # Choose an instance class
+
+
+handlers:
+- url: /.*          # Direct all traffic to the main app
+  script: auto
+  secure: always    # Enforce HTTPS
+
+# Environment variables:
+env_variables:
+  FLASK_ENV: 'production'
+  # SECRET_KEY: 'your-secret-key'
