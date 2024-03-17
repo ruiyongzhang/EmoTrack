@@ -6,10 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';               // new
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';                 // new
-
+import 'package:flutter/widgets.dart';
 import 'app_state.dart';                                 // new
 import 'firebase_options.dart';
-import 'home_page.dart';
+import 'report_page.dart';
+import 'Login.dart';
 
 void main() async {
 
@@ -25,12 +26,18 @@ void main() async {
 
 }
 
+bool isloggedIn = false;
+
 // Add GoRouter configuration outside the App class
 final _router = GoRouter(
+  
+
   routes: [
+    
+
     GoRoute(
       path: '/',
-      builder: (context, state) => const HomePage(),
+      builder: (context, state) => LogInPage(),
       routes: [
         GoRoute(
           path: 'sign-in',
@@ -65,7 +72,10 @@ final _router = GoRouter(
                             'Please check your email to verify your email address'));
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   }
-                  context.pushReplacement('/');
+                  // context.pushReplacement('/');
+                  // context.pushReplacement('/');
+                  // context.push('/home_page');
+                  context.go('/myHome_page');
                 })),
               ],
             );
@@ -98,7 +108,16 @@ final _router = GoRouter(
         ),
       ],
     ),
+    GoRoute(
+      path: '/myHome_page',
+      builder: (context, state) => MyHomePage(),
+    ),
+    GoRoute(
+      path:'/report_page',
+      builder: (context, state) => ReportPage(),
+    )
   ],
+  initialLocation: isloggedIn ? '/myHome_page' : '/',
 );
 // end of GoRouter configuration
 
@@ -108,6 +127,9 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    isloggedIn = Provider.of<ApplicationState>(context).loggedIn;
+   
+
     return MaterialApp.router(
       title: 'Firebase Meetup',
       theme: ThemeData(
@@ -121,7 +143,75 @@ class App extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         useMaterial3: true,
       ),
-      routerConfig: _router, // new
+      routerConfig: _router,
+      // routeInformationParser: _router.routeInformationParser,
+      // routerDelegate: _router.routerDelegate,
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  var selectedIndex = 0;
+  
+
+  @override
+  Widget build(BuildContext context) {
+    Widget page;
+    switch (selectedIndex) {
+      case 0:
+        page = ReportPage();
+        // context.push('/report_page');
+        break;
+      case 1:
+        page = LogInPage();
+        // context.push('/login_page');
+        break;
+      default:
+        throw UnimplementedError('no widget for $selectedIndex');
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Scaffold(
+          body: SafeArea(
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    child: page,
+                  )
+                ),
+              ],
+            ),
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            items: const <BottomNavigationBarItem>[
+              
+              BottomNavigationBarItem(
+                icon: Icon(Icons.file_copy_sharp),
+                label: 'Report',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.account_circle),
+                label: 'Account',
+              ),
+            ],
+            currentIndex: selectedIndex,
+            onTap: (value) {
+              setState(() {
+                selectedIndex = value;
+              });
+            },
+          
+          ),
+          
+        );
+      }
     );
   }
 }
