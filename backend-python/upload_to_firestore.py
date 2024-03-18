@@ -4,36 +4,45 @@ from google.cloud import storage as gcs, firestore
 from google.oauth2 import service_account
 import json
 
-# 初始化Cloud Storage和Firestore客户端
-gcs_client = gcs.Client()
-firestore_client = firestore.Client()
+separated_data = {
+    "title": [],
+    "titleUrl": [],
+    "time": [],
+}
+
+gcs_credentials = service_account.Credentials.from_service_account_file("sms-app-project-415923-5cd00cff4d32.json")
+gcs_client = gcs.Client(credentials=gcs_credentials)
+
 cred = credentials.Certificate("sms-app-project-415923-5cd00cff4d32.json")
 firebase_admin.initialize_app(cred, {'storageBucket': 'sms-app-project-415923.appspot.com'})
+firestore_client = firestore.Client(credentials=gcs_credentials)
 
-def upload_json_to_firestore():
-    gcs_credentials = service_account.Credentials.from_service_account_file("sms-app-project-415923-5cd00cff4d32.json")
-    bucket = storage.bucket()
-    blob = bucket.blob('Files/watch-history.json')
-    json_data = gcs.Client(credentials=gcs_credentials).bucket(bucket.name).blob(blob.name).download_as_text()
-    # # 从Cloud Storage读取JSON文件
-    # bucket = gcs_client.bucket(bucket_name)
-    # blob = bucket.blob(source_blob_name)
-    # json_data = blob.download_as_text()
-
-    # 解析JSON数据
-    data = json.loads(json_data)
-
-    # 假设data是一个包含多个用户信息的列表
-    for user_info in data:
-        # 使用上传用户的独一无二信息作为文档ID
-        user_id = user_info['user_id']
-        doc_ref = firestore_client.collection('users').document(user_id)
-
-        # 将用户信息写入Firestore
-        doc_ref.set(user_info)
-        print(f'Data for user {user_id} uploaded to Firestore')
-
-# 示例：调用函数
+gcs_credentials = service_account.Credentials.from_service_account_file('sms-app-project-415923-5cd00cff4d32.json')
 bucket_name = 'sms-app-project-415923.appspot.com'
-source_blob_name = 'gs://sms-app-project-415923.appspot.com/Files/watch-history.json'
-upload_json_to_firestore()
+bucket = storage.bucket(bucket_name)
+blobs = gcs_client.list_blobs(bucket_name, prefix='Files/')
+prefixes = set([blob.name.split('/')[1] for blob in blobs if '/' in blob.name])
+for uid in prefixes:
+    # 枚举指定用户uid文件夹内的所有JSON文件
+    user_blobs = bucket.list_blobs(prefix=f'Files/{uid}/')
+    for user_blob in user_blobs:
+        if user_blob.name.endswith('.json'):
+            # 读取JSON文件内容
+            json_data = user_blob.download_as_text()
+            data = json.loads(json_data)
+            
+            # 使用用户uid作为Firestore文档ID，上传JSON内容
+            doc_ref = firestore_client.collection('Users Watching History Data').document(uid)
+            
+            for item in data:
+                if "title" in item and "titleUrl" in item and "time" in item:
+                    separated_data['title'].append(item['title'])
+                    separated_data['titleUrl'].append(item['titleUrl'])
+                    separated_data['time'].append(item['time'])
+            
+            data = {'title': separated_data['title'], 'titleUrl': separated_data['titleUrl'], 'time': separated_data['time']}
+            doc_ref.set(data)
+            
+            print(f'Uploaded data from {user_blob.name} to Firestore document {uid}')
+            
+            

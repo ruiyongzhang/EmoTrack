@@ -50,11 +50,9 @@ class ReportPage extends StatelessWidget {
     final file = File(filePath!);
     final fileBytes = File(result.files.single.path!).readAsBytesSync();
 
-    
-
     final metadate = SettableMetadata(contentType: 'json');
     final storageRef = FirebaseStorage.instance.ref();
-    final uploadTask = storageRef.child("Files/$uid/watch-history.json").putFile(file, metadate);
+    final uploadTask = storageRef.child("Files/$uid/$fileName.json").putFile(file, metadate);
 
     // Listen for state changes, errors, and completion of the upload.
     uploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) {
