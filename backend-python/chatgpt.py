@@ -1,4 +1,4 @@
-import os
+import os, json
 from openai import OpenAI
 
 os.environ["OPENAI_API_KEY"] = "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"
@@ -8,9 +8,20 @@ client = OpenAI(
     api_key=os.environ.get("OPENAI_API_KEY") 
 )
 
-chat_completion = client.chat.completions.create(
-    model="gpt-3.5-turbo",
-    messages=[{"role": "user", "content": "Hello world"}]
-)
+with open("scraped_data.json", "r") as file:
+    data = json.load(file)
+    
+for item in data:
+    title = item["title"]
+    description = item["description"]
 
-print(chat_completion.choices[0].message.content)
+    content = "Categorize the YouTube video in one word with its title and description, the title is: " + title + " and the description is: " + description
+
+
+
+    chat_completion = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": content}]
+    )
+
+    print(chat_completion.choices[0].message.content)
