@@ -19,33 +19,15 @@ class _VideoPageState extends State<VideoPage> {
   // String _selectedOption = 'Good';
   String? _selectedOption;
   bool _isWatching = false;
+  bool _isConfirmed = false;
+  bool _addNewDoc = false;
   String fileName = 'null';
-  // int _watchCount = 0;
-
-  // void addWatchInfo(String value, DateTime time) {
-  //   print(value);
-  //   final userDoc = FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser!.uid).collection('Mood Records').doc(_watchCount.toString());
-  //   userDoc.set({
-  //     'Before Watch Mood': value,
-  //     'Start Watch Time': time,
-  //   });
-  // }
-
-  // void updateWatchInfo(String value, DateTime time) {
-  //   print(value);
-  //   final userDoc = FirebaseFirestore.instance.collection('User').doc(FirebaseAuth.instance.currentUser!.uid).collection('Mood Records').doc(_watchCount.toString());
-  //   userDoc.update({
-  //     'After Watch Mood': value,
-  //     'Stop Watch Time': time,
-  //   });
-  //   _watchCount++;
-  // }
 
   void saveWatchRecord(String value, DateTime time) {
 
     final userDocRef = FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser!.uid).collection('Mood Records');
 
-    if (_isWatching == true) {
+    if (_addNewDoc) {
       fileName = DateFormat('yyyy-MM-dd HH:mm:ss').format(time);
       userDocRef.doc(fileName).set({
         'Before Watch Mood': value,
@@ -56,11 +38,10 @@ class _VideoPageState extends State<VideoPage> {
         'After Watch Mood': value,
         'Stop Watch Time': DateFormat('yyyy-MM-dd HH:mm:ss').format(time),
       });
-      // _watchCount++;
     }
   }
 
-  void _showDialog() {
+  Future<void> _showDialog() async {
     _selectedOption = null;
 
     showDialog(
@@ -121,9 +102,21 @@ class _VideoPageState extends State<VideoPage> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
+                setState(() {
+                  _isConfirmed = false;
+                });
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
                 if (_selectedOption != null) {
                   saveWatchRecord(_selectedOption!, DateTime.now());
                 }
+                setState(() {
+                  _isConfirmed = true;
+                });
               },
               child: Text('Confirm'),
             )
@@ -137,10 +130,14 @@ class _VideoPageState extends State<VideoPage> {
     if (!_isWatching) {
       
       setState(() {
-        _isWatching = true;
+        _addNewDoc = true;
       });
       _showDialog();
-      
+      if (_isConfirmed) {
+        setState(() {
+          _isWatching = true;
+        });
+      }
     } else {
       _showAlert('You are already watching.');
     }
@@ -148,11 +145,15 @@ class _VideoPageState extends State<VideoPage> {
 
   void _stopWatching() {
     if (_isWatching) {
-      
       setState(() {
-        _isWatching = false;
+        _addNewDoc = false;
       });
       _showDialog();
+      if (_isConfirmed) {
+        setState(() {
+          _isWatching = false;
+        });
+      }
     } else {
       _showAlert('You are not watching anything.');
     }
