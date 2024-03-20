@@ -1,0 +1,199 @@
+import 'dart:io';
+import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart'
+    hide EmailAuthProvider, PhoneAuthProvider;
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'src/authentication.dart';
+import 'src/widgets.dart';
+
+class VideoPage extends StatefulWidget {
+
+  @override
+  State<VideoPage> createState() => _VideoPageState();
+}
+
+class _VideoPageState extends State<VideoPage> {
+  
+  // String _selectedOption = 'Good';
+  String? _selectedOption;
+  bool _isWatching = false;
+  String fileName = 'null';
+  // int _watchCount = 0;
+
+  // void addWatchInfo(String value, DateTime time) {
+  //   print(value);
+  //   final userDoc = FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser!.uid).collection('Mood Records').doc(_watchCount.toString());
+  //   userDoc.set({
+  //     'Before Watch Mood': value,
+  //     'Start Watch Time': time,
+  //   });
+  // }
+
+  // void updateWatchInfo(String value, DateTime time) {
+  //   print(value);
+  //   final userDoc = FirebaseFirestore.instance.collection('User').doc(FirebaseAuth.instance.currentUser!.uid).collection('Mood Records').doc(_watchCount.toString());
+  //   userDoc.update({
+  //     'After Watch Mood': value,
+  //     'Stop Watch Time': time,
+  //   });
+  //   _watchCount++;
+  // }
+
+  void saveWatchRecord(String value, DateTime time) {
+
+    final userDocRef = FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser!.uid).collection('Mood Records');
+
+    if (_isWatching == true) {
+      fileName = DateFormat('yyyy-MM-dd HH:mm:ss').format(time);
+      userDocRef.doc(fileName).set({
+        'Before Watch Mood': value,
+        'Start Watch Time': DateFormat('yyyy-MM-dd HH:mm:ss').format(time),
+      });
+    } else {
+      userDocRef.doc(fileName).update({
+        'After Watch Mood': value,
+        'Stop Watch Time': DateFormat('yyyy-MM-dd HH:mm:ss').format(time),
+      });
+      // _watchCount++;
+    }
+  }
+
+  void _showDialog() {
+    _selectedOption = null;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('How do you feel now?'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  RadioListTile<String>(
+                    title: Text('Good'),
+                    value: 'Good',
+                    hoverColor: Colors.pink[100],
+                    activeColor: Colors.pink[400],
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedOption = value!;
+                        // Navigator.of(context).pop();
+                      });
+                    },
+                    groupValue: _selectedOption,
+                  ),
+                  RadioListTile<String>(
+                    title: Text('Okay'),
+                    value: 'Okay',
+                    hoverColor: Colors.pink[100],
+                    activeColor: Colors.pink[400],
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedOption = value!;
+                        // Navigator.of(context).pop();
+                      });
+                    },
+                    groupValue: _selectedOption,
+                  ),
+                  RadioListTile<String>(
+                    title: Text('Not good'),
+                    value: 'Not good',
+                    hoverColor: Colors.pink[100],
+                    activeColor: Colors.pink[400],
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedOption = value!;
+                        // Navigator.of(context).pop();
+                      });
+                    },
+                    groupValue: _selectedOption,
+                  ),
+                ],
+                
+              );
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                if (_selectedOption != null) {
+                  saveWatchRecord(_selectedOption!, DateTime.now());
+                }
+              },
+              child: Text('Confirm'),
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  void _startWatching() {
+    if (!_isWatching) {
+      
+      setState(() {
+        _isWatching = true;
+      });
+      _showDialog();
+      
+    } else {
+      _showAlert('You are already watching.');
+    }
+  }
+
+  void _stopWatching() {
+    if (_isWatching) {
+      
+      setState(() {
+        _isWatching = false;
+      });
+      _showDialog();
+    } else {
+      _showAlert('You are not watching anything.');
+    }
+  }
+
+  void _showAlert(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Video Watching Page'),
+      ),
+      body: ListView(
+        children: <Widget>[
+          
+          ElevatedButton(
+            onPressed:  _startWatching, 
+            child: Text('Start Watching'),
+          ),
+          ElevatedButton(
+            onPressed: _stopWatching, 
+            child: Text('Stop Watching'),
+          ),
+        ],
+      ),
+    );
+  }
+}

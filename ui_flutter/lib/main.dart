@@ -1,13 +1,15 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-import 'package:firebase_ui_auth/firebase_ui_auth.dart'; // new
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';               // new
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';                 // new
+import 'package:provider/provider.dart';
 import 'package:flutter/widgets.dart';
-import 'app_state.dart';                                 // new
+import 'video_page.dart';
+import 'app_state.dart';
 import 'firebase_options.dart';
 import 'report_page.dart';
 import 'Login.dart';
@@ -115,6 +117,10 @@ final _router = GoRouter(
     GoRoute(
       path:'/report_page',
       builder: (context, state) => ReportPage(),
+    ),
+    GoRoute(
+      path: '/video_page',
+      builder: (context, state) => VideoPage(),
     )
   ],
   initialLocation: isloggedIn ? '/myHome_page' : '/',
@@ -164,13 +170,15 @@ class _MyHomePageState extends State<MyHomePage> {
     Widget page;
     switch (selectedIndex) {
       case 0:
-        page = ReportPage();
+        page = VideoPage();
         // context.push('/report_page');
         break;
       case 1:
-        page = LogInPage();
+        page = ReportPage();
         // context.push('/login_page');
         break;
+      case 2:
+        page = LogInPage();
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
@@ -191,7 +199,10 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           bottomNavigationBar: BottomNavigationBar(
             items: const <BottomNavigationBarItem>[
-              
+              BottomNavigationBarItem(
+                icon: Icon(Icons.video_collection),
+                label: 'Video'
+              ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.file_copy_sharp),
                 label: 'Report',
@@ -200,6 +211,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 icon: Icon(Icons.account_circle),
                 label: 'Account',
               ),
+              
             ],
             currentIndex: selectedIndex,
             onTap: (value) {

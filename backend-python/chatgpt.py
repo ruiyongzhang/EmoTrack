@@ -15,12 +15,12 @@ for item in data:
     title = item["title"]
     description = item["description"]
 
-    content = "Categorize the YouTube video in one word with its title and description, the title is: " + title + " and the description is: " + description
+    content = "Categorise the YouTube video in one word accoding to its title and description, the title is: " + title + " and the description is: " + description
 
 
 
     chat_completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4",
         messages=[{"role": "user", "content": content}]
     )
 
