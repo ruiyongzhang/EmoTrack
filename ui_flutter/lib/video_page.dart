@@ -136,6 +136,7 @@ class _VideoPageState extends State<VideoPage> {
       if (_isConfirmed) {
         setState(() {
           _isWatching = true;
+          _isConfirmed = false;
         });
       }
     } else {
@@ -152,6 +153,7 @@ class _VideoPageState extends State<VideoPage> {
       if (_isConfirmed) {
         setState(() {
           _isWatching = false;
+          _isConfirmed = false;
         });
       }
     } else {
@@ -182,9 +184,9 @@ class _VideoPageState extends State<VideoPage> {
       appBar: AppBar(
         title: const Text('Video Watching Page'),
       ),
-      body: ListView(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          
           ElevatedButton(
             onPressed:  _startWatching, 
             child: Text('Start Watching'),
