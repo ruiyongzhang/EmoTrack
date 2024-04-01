@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart'
     hide EmailAuthProvider, PhoneAuthProvider;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:ui_flutter/main.dart';
 import 'src/authentication.dart';
 import 'src/widgets.dart';
 
@@ -185,16 +186,39 @@ class _VideoPageState extends State<VideoPage> {
         title: const Text('Video Watching Page'),
       ),
       body: Column(
+        // mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          ElevatedButton(
-            onPressed:  _startWatching, 
-            child: Text('Start Watching'),
+          Spacer(flex: 1),
+          Center(
+            child: FractionallySizedBox(
+              widthFactor: 2/3,
+              child: ElevatedButton(
+                onPressed:  _startWatching, 
+                child: Text('Start Watching'),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(double.infinity, 36),
+                ),
+              ),
+            ),
           ),
-          ElevatedButton(
-            onPressed: _stopWatching, 
-            child: Text('Stop Watching'),
+          
+          // SizedBox(height: 50),
+          Spacer(flex: 1),
+          Center(
+            child: FractionallySizedBox(
+              widthFactor: 2/3,
+              child: ElevatedButton(
+                onPressed: _stopWatching, 
+                child: Text('Stop Watching'),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(double.infinity, 36),
+                ),
+              ),
+            ),
           ),
+          
+          Spacer(flex: 2),
         ],
       ),
     );

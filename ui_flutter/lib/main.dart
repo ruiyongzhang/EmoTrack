@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -32,11 +32,22 @@ bool isloggedIn = false;
 
 // Add GoRouter configuration outside the App class
 final _router = GoRouter(
-  
+  initialLocation: '/',
+  redirect: (context, state) {
+    // Check if user is logged in
+    final loggedIn = FirebaseAuth.instance.currentUser != null;
+    final loggingIn = state.uri.toString() == '/';
+
+    // Redirect to home page if logged in and on login page
+    if (loggedIn && loggingIn) return '/myHome_page';
+    // Redirect to login page if not logged in and trying to access a restricted page
+    if (!loggedIn && !loggingIn) return '/';
+    
+    // No redirection if none of the above conditions are met
+    return null;
+  },
 
   routes: [
-    
-
     GoRoute(
       path: '/',
       builder: (context, state) => LogInPage(),
@@ -123,7 +134,7 @@ final _router = GoRouter(
       builder: (context, state) => VideoPage(),
     )
   ],
-  initialLocation: isloggedIn ? '/myHome_page' : '/',
+  
 );
 // end of GoRouter configuration
 
@@ -137,7 +148,6 @@ class App extends StatelessWidget {
    
 
     return MaterialApp.router(
-      title: 'Firebase Meetup',
       theme: ThemeData(
         buttonTheme: Theme.of(context).buttonTheme.copyWith(
               highlightColor: Colors.deepPurple,
