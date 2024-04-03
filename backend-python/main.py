@@ -10,13 +10,14 @@ app = Flask(__name__)
 def main():
     return "Hi Flask!"
 
-@app.route('/api/handle_file', method=['POST'])
+@app.route('/api/handle_file', methods=['POST'])
 def handle_file():
     data = request.json
-    handle_file = data.get('handle_file', False)
-    # uid = data.get('uid', '')
+    handle_file = data.get("handle_file", False)
+    userUid = data.get("userUid", '')
+    
     if handle_file:
-        upload_to_db()
+        upload_to_db(userUid)
         # handle_file = False
         # print("Hello, reach here")
         return jsonify({"message": "Handling file..."}), 200
