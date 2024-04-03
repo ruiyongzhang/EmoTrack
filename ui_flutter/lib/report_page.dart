@@ -1,5 +1,7 @@
+import 'dart:ffi';
 import 'dart:io';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart'
     hide EmailAuthProvider, PhoneAuthProvider;
 import 'package:firebase_database/firebase_database.dart';
@@ -17,8 +19,9 @@ class ReportPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appState = Provider.of<ApplicationState>(context);
-    final uid = appState.userUid;
+    // final appState = Provider.of<ApplicationState>(context);
+    // final uid = appState.userUid;
+    // final uid = FirebaseAuth.instance.currentUser!.uid;
 
     return Scaffold(
       appBar: AppBar(
@@ -29,10 +32,26 @@ class ReportPage extends StatelessWidget {
           const Header('Upload Your YouTube Watching History Here'),
           ElevatedButton(
             onPressed: (){
-              uploadFile(uid);
+              uploadFile(FirebaseAuth.instance.currentUser!.uid);
             }, 
             child: Text('Upload File'),
           ),
+          ElevatedButton(
+            onPressed: (){
+              sendCommand(true);
+              print('working');
+            }, 
+            child: Text('Working...'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ChartPage())
+              );
+            },
+            child: Text('Generate Your Viewing Behaviours Report'),
+          )
         ],
       ),
     );
@@ -52,7 +71,7 @@ class ReportPage extends StatelessWidget {
 
     final metadate = SettableMetadata(contentType: 'json');
     final storageRef = FirebaseStorage.instance.ref();
-    final uploadTask = storageRef.child("Files/$uid/$fileName.json").putFile(file, metadate);
+    final uploadTask = storageRef.child("Files/$uid/$fileName").putFile(file, metadate);
 
     // Listen for state changes, errors, and completion of the upload.
     uploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) {
@@ -79,4 +98,36 @@ class ReportPage extends StatelessWidget {
     });
   }
 
+  Future<void> sendCommand(bool handleFile) async {
+    print('1111111111');
+    final url = Uri.parse('https://sms-app-project-415923.nw.r.appspot.com/api/handle_file');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({"handle_file": handleFile}),
+    );
+    print('22222');
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      print('Response from server: ${response.body}');
+    } else {
+      print('Failed to send command.');
+    }
+  }
+
+}
+
+class ChartPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Viewing Behaviours Report'),
+      ),
+      body: Center(
+        child: Text('This is the Viewing Behaviours Report Page'),
+      ),
+      
+    );
+  }
 }

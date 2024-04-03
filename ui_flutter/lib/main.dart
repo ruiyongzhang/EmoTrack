@@ -41,7 +41,7 @@ final _router = GoRouter(
     // Redirect to home page if logged in and on login page
     if (loggedIn && loggingIn) return '/myHome_page';
     // Redirect to login page if not logged in and trying to access a restricted page
-    if (!loggedIn && !loggingIn) return '/';
+    if (!loggedIn && !loggingIn) return '/sign-in';
     
     // No redirection if none of the above conditions are met
     return null;
