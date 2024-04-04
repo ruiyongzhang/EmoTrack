@@ -8,7 +8,7 @@ from google.api_core.exceptions import DeadlineExceeded
 from googleapiclient.discovery import build
 from urllib.parse import urlparse, parse_qs
 
-# 用你的API密钥替换下面的YOUR_API_KEY
+
 api_key = 'AIzaSyBZrV-xxAvaJtjsozjp4vo6WdrEvm8DNH4'
 youtube = build('youtube', 'v3', developerKey=api_key)
 os.environ["OPENAI_API_KEY"] = "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"
