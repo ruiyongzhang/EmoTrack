@@ -38,13 +38,22 @@ class ReportPage extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: (){
-              sendCommand(true);
+              sendCommand(true, FirebaseAuth.instance.currentUser!.uid);
               print('working');
             }, 
             child: Text('Working...'),
           ),
           ElevatedButton(
             onPressed: () {
+              DateTime now = DateTime.now().toUtc();
+              DateTime startLastWeek = DateTime.utc(now.year, now.month, now.day - 20, 0, 0, 0);
+              DateTime endToday = DateTime.utc(now.year, now.month, now.day + 1,0, 0, 0);
+
+              String lastWeekStartDay = startLastWeek.toString().substring(0, 19);
+              String endTodayDay = endToday.toString().substring(0, 19);
+              print(lastWeekStartDay);
+              print(endTodayDay);
+              handleData(true, FirebaseAuth.instance.currentUser!.uid, lastWeekStartDay, endTodayDay);
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => ChartPage())
@@ -98,15 +107,42 @@ class ReportPage extends StatelessWidget {
     });
   }
 
-  Future<void> sendCommand(bool handleFile) async {
+  Future<void> sendCommand(bool handleFile, String userUid) async {
     print('1111111111');
     final url = Uri.parse('https://sms-app-project-415923.nw.r.appspot.com/api/handle_file');
+    // final url = Uri.parse('http://localhost:5000/api/handle_file');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: json.encode({"handle_file": handleFile}),
+      body: json.encode({
+        "handle_file": handleFile,
+        "userUid": userUid,
+      }),
     );
     print('22222');
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      print('Response from server: ${response.body}');
+    } else {
+      print('Failed to send command.');
+    }
+  }
+
+  Future<void> handleData(bool handleData, String userUid, String startDate, String endDate) async {
+    print('77777');
+    final url = Uri.parse('https://sms-app-project-415923.nw.r.appspot.com/api/handle_data');
+    // final url = Uri.parse('http://localhost:5000/api/handle_data');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        "handle_data": handleData,
+        "userUid": userUid,
+        "startDate": startDate,
+        "endDate": endDate,
+      }),
+    );
+    print('88888');
     print(response.statusCode);
     if (response.statusCode == 200) {
       print('Response from server: ${response.body}');

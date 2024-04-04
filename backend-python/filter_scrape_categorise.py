@@ -28,15 +28,16 @@ try:
 except Exception as e:
   print(f"An unexpected error occurred: {e}")
 
-# Define your time range
-start_time = datetime.strptime('2024-02-14 00:00:00', '%Y-%m-%d %H:%M:%S').replace(tzinfo=timezone.utc)
-end_time = datetime.strptime('2024-02-18 00:00:00', '%Y-%m-%d %H:%M:%S').replace(tzinfo=timezone.utc)
+
 
 # Function to parse ISO 8601 formatted string to a datetime object
 def convert_time(iso_time_str):
     return parser.isoparse(iso_time_str)
 
-def filter_scrape_categorise(uid):
+def filter_scrape_categorise(uid, startDate, endDate):
+  # Define your time range
+  start_time = datetime.strptime(startDate, '%Y-%m-%d %H:%M:%S').replace(tzinfo=timezone.utc)
+  end_time = datetime.strptime(endDate, '%Y-%m-%d %H:%M:%S').replace(tzinfo=timezone.utc)
   print('1111111')
   # sub_collection_path = 
   history_ref = db.collection('Users').document(uid).collection('YouTube Watch History')
@@ -46,6 +47,8 @@ def filter_scrape_categorise(uid):
     # enable the headless mode
     options = Options()
     options.add_argument('--headless')
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
 
     # initialize a web driver instance to control a Chrome window
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
@@ -140,5 +143,7 @@ def scrape_info(url, driver):
     
     
 
-uid = 'qKtXmGL42mZAfwSYEnsLdDmA1lF2'
-filter_scrape_categorise(uid)
+# uid = 'qKtXmGL42mZAfwSYEnsLdDmA1lF2'
+# startDate = '2024-02-14 00:00:00'
+# endDate = '2024-02-18 00:00:00'
+# filter_scrape_categorise(uid, startDate, endDate)

@@ -1,7 +1,8 @@
 from flask import Flask, request, jsonify
 
 from upload_to_db import upload_to_db
-
+# from filter_scrape_categorise import filter_scrape_categorise
+from new_fsc import new_fsc
 
 app = Flask(__name__)
 
@@ -24,6 +25,20 @@ def handle_file():
     else:
         return jsonify({"message": "No action taken."}), 200
 
+@app.route('/api/handle_data', methods=['POST'])
+def handle_data():
+    data = request.json
+    handle_data = data.get("handle_data", False)
+    userUid = data.get("userUid", '')
+    startDate = data.get("startDate", '')
+    endDate = data.get("endDate", '')
+    
+    if handle_data:
+        new_fsc(userUid, startDate, endDate)
+        return jsonify({"message": "Handling data succeed"}), 200
+    else:
+        return jsonify({"message": "No action taken."}), 200
+    
 
 if __name__ == '__main__':
     app.debug=True  # 默认开启debug模式
