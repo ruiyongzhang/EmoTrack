@@ -28,7 +28,7 @@ except Exception as e:
 def convert_time(iso_time_str):
     return parser.isoparse(iso_time_str)
   
-def new_fsc(uid, startDate, endDate):
+async def new_fsc(uid, startDate, endDate):
   # Define your time range
   start_time = datetime.strptime(startDate, '%Y-%m-%d %H:%M:%S').replace(tzinfo=timezone.utc)
   end_time = datetime.strptime(endDate, '%Y-%m-%d %H:%M:%S').replace(tzinfo=timezone.utc)
@@ -71,7 +71,7 @@ def new_fsc(uid, startDate, endDate):
         
         print(video_title)
         print('Upload succeed')
-        
+  return 'YouTube History Data Updated!'
 
 def new_scrape_info(url):
   parsed_url = urlparse(url)
@@ -97,4 +97,4 @@ def new_scrape_info(url):
 uid = 'qKtXmGL42mZAfwSYEnsLdDmA1lF2'
 startDate = '2024-03-01 00:00:00'
 endDate = '2024-04-02 00:00:00'
-new_fsc(uid, startDate, endDate)
+# new_fsc(uid, startDate, endDate)

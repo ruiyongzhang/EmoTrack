@@ -1,5 +1,7 @@
 gunicorn==20.1.0
 Flask==3.0.0
+
+Quart==0.19.5
 openai==1.16.1
 selenium==4.18.1
 webdriver_manager==4.0.1

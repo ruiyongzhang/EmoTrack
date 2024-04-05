@@ -1,10 +1,11 @@
-from flask import Flask, request, jsonify
+from quart import Quart, request, jsonify
 
 from upload_to_db import upload_to_db
 # from filter_scrape_categorise import filter_scrape_categorise
 from new_fsc import new_fsc
+from report_generate import report_generate
 
-app = Flask(__name__)
+app = Quart(__name__)
 
 # 主页
 @app.route('/')
@@ -26,15 +27,18 @@ def handle_file():
         return jsonify({"message": "No action taken."}), 200
 
 @app.route('/api/handle_data', methods=['POST'])
-def handle_data():
-    data = request.json
+async def handle_data():
+    data = await request.json
     handle_data = data.get("handle_data", False)
     userUid = data.get("userUid", '')
     startDate = data.get("startDate", '')
     endDate = data.get("endDate", '')
     
     if handle_data:
-        new_fsc(userUid, startDate, endDate)
+        message = await new_fsc(userUid, startDate, endDate)
+        print(message)
+        message = await report_generate(userUid)
+        print(message)
         return jsonify({"message": "Handling data succeed"}), 200
     else:
         return jsonify({"message": "No action taken."}), 200
