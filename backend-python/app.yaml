@@ -8,11 +8,11 @@ entrypoint: hypercorn -b :$PORT main:app --graceful-timeout 600
 #     operating_system: "ubuntu22"
 #     runtime_version: "3.12"
 
-# service: backend-service
+service: default
 instance_class: F1 # Choose an instance class
 
 automatic_scaling:
-  max_instances: 5
+  max_instances: 1
 
 handlers:
 - url: /.*          # Direct all traffic to the main app

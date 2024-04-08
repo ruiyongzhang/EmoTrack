@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:async';
 
@@ -43,7 +44,7 @@ class _VideoPageState extends State<VideoPage> {
     }
   }
 
-  Future<void> _showDialog() async {
+  Future<bool> _showDialog() async {
     _selectedOption = null;
 
     showDialog(
@@ -126,19 +127,24 @@ class _VideoPageState extends State<VideoPage> {
         );
       },
     );
+
+    return _isConfirmed;
   }
 
-  void _startWatching() {
+  void _startWatching() async {
     if (!_isWatching) {
-      
       setState(() {
         _addNewDoc = true;
       });
-      _showDialog();
+      _isConfirmed = await _showDialog();
       if (_isConfirmed) {
         setState(() {
           _isWatching = true;
           _isConfirmed = false;
+        });
+      } else {
+        setState(() {
+          _isWatching = false;
         });
       }
     } else {
@@ -146,16 +152,20 @@ class _VideoPageState extends State<VideoPage> {
     }
   }
 
-  void _stopWatching() {
+  void _stopWatching() async {
     if (_isWatching) {
       setState(() {
         _addNewDoc = false;
       });
-      _showDialog();
+      _isConfirmed = await _showDialog();
       if (_isConfirmed) {
         setState(() {
           _isWatching = false;
           _isConfirmed = false;
+        });
+      } else {
+        setState(() {
+          _isWatching = true;
         });
       }
     } else {
@@ -197,9 +207,6 @@ class _VideoPageState extends State<VideoPage> {
               child: ElevatedButton(
                 onPressed:  _startWatching, 
                 child: Text('Start Watching'),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 36),
-                ),
               ),
             ),
           ),
@@ -212,9 +219,6 @@ class _VideoPageState extends State<VideoPage> {
               child: ElevatedButton(
                 onPressed: _stopWatching, 
                 child: Text('Stop Watching'),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 36),
-                ),
               ),
             ),
           ),

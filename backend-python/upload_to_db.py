@@ -3,14 +3,17 @@ from firebase_admin import credentials, storage, get_app
 from google.cloud import storage as gcs, firestore
 from google.oauth2 import service_account
 import json
+from dateutil import parser, tz
+
+def convert_time_str(iso_time_str):
+    time_utc = parser.isoparse(iso_time_str)
+    london_tz = tz.gettz('Europe/London')
+    dt_uk = time_utc.astimezone(london_tz)
+    dt_uk_str = dt_uk.strftime('%Y-%m-%d %H:%M:%S')
+    return dt_uk_str
 
 def upload_to_db(userUid):
     
-    # separated_data = {
-    #     "title": [],
-    #     "titleUrl": [],
-    #     "time": [],
-    # }
     print('enter first stage')
     gcs_credentials = service_account.Credentials.from_service_account_file("sms-app-project-415923-5cd00cff4d32.json")
     gcs_client = gcs.Client(credentials=gcs_credentials)
@@ -21,9 +24,7 @@ def upload_to_db(userUid):
     except ValueError as e:
         cred = credentials.Certificate("sms-app-project-415923-5cd00cff4d32.json")
         firebase_admin.initialize_app(cred, {'storageBucket': 'sms-app-project-415923.appspot.com'})
-        
-        
-        # gcs_credentials = service_account.Credentials.from_service_account_file('sms-app-project-415923-5cd00cff4d32.json')
+    
     
     bucket_name = 'sms-app-project-415923.appspot.com'
     bucket = storage.bucket(bucket_name)
@@ -41,16 +42,18 @@ def upload_to_db(userUid):
                     data = json.loads(json_data)
                     
                     # 使用用户uid作为Firestore文档ID，上传JSON内容
-                    doc_ref = firestore_client.collection('Users').document(uid).collection('YouTube Watch History')
+                    history_ref = firestore_client.collection('Users').document(uid).collection('YouTube Watch History')
+                    history_docs = history_ref.stream()
                     
                     for item in data:
                         if "title" in item and "titleUrl" in item and "time" in item:
-                            video_info = {'title': item['title'], 'titleUrl': item['titleUrl'], 'time': item['time']}
+                            # if any(item['time'] == history_doc.id for history_doc in history_docs):
+                            #     print('Already uploaded this history!')
+                            #     continue
+                            
+                            video_info = {'title': item['title'], 'titleUrl': item['titleUrl'], 'time': convert_time_str(item['time'])}
                             doc_name = item['time']
-                            doc_ref.document(doc_name).set(video_info)
-                            # separated_data['title'].append(item['title'])
-                            # separated_data['titleUrl'].append(item['titleUrl'])
-                            # separated_data['time'].append(item['time'])
+                            history_ref.document(doc_name).set(video_info)
                     
                             print(f'Uploaded data from {user_blob.name} to Firestore document {doc_name}')
         # print('Finish one user')

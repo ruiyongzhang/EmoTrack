@@ -13,8 +13,8 @@ def main():
     return "Hi Flask!"
 
 @app.route('/api/handle_file', methods=['POST'])
-def handle_file():
-    data = request.json
+async def handle_file():
+    data = await request.json
     handle_file = data.get("handle_file", False)
     userUid = data.get("userUid", '')
     

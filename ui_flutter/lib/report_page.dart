@@ -5,14 +5,28 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart'
     hide EmailAuthProvider, PhoneAuthProvider;
 import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:file_picker/file_picker.dart';
-import 'app_state.dart';
 
 import 'src/authentication.dart';
 import 'src/widgets.dart';
+
+import 'chart_page.dart';
+
+final db = FirebaseFirestore.instance;
+
+DateTime now = DateTime.now();
+DateTime startLastWeek = DateTime(now.year, now.month, now.day - 6, 0, 0, 0);
+DateTime endToday = DateTime(now.year, now.month, now.day + 1,0, 0, 0);
+
+String lastWeekStartDay = startLastWeek.toString().substring(0, 19);
+String endTodayDay = endToday.toString().substring(0, 19);
+
+
+
 
 class ReportPage extends StatelessWidget {
   // const ReportPage({super.key});
@@ -31,36 +45,65 @@ class ReportPage extends StatelessWidget {
         children: <Widget>[
           const Header('Upload Your YouTube Watching History Here'),
           ElevatedButton(
-            onPressed: (){
-              uploadFile(FirebaseAuth.instance.currentUser!.uid);
+            onPressed: () async {
+              await uploadFile(FirebaseAuth.instance.currentUser!.uid);
+              print('File uploaded');
+              sendCommand(true, FirebaseAuth.instance.currentUser!.uid);
+              print('working');
             }, 
             child: Text('Upload File'),
           ),
           ElevatedButton(
-            onPressed: (){
-              sendCommand(true, FirebaseAuth.instance.currentUser!.uid);
-              print('working');
-            }, 
-            child: Text('Working...'),
-          ),
-          ElevatedButton(
             onPressed: () {
-              DateTime now = DateTime.now().toUtc();
-              DateTime startLastWeek = DateTime.utc(now.year, now.month, now.day - 20, 0, 0, 0);
-              DateTime endToday = DateTime.utc(now.year, now.month, now.day + 1,0, 0, 0);
-
-              String lastWeekStartDay = startLastWeek.toString().substring(0, 19);
-              String endTodayDay = endToday.toString().substring(0, 19);
+              
               print(lastWeekStartDay);
               print(endTodayDay);
               handleData(true, FirebaseAuth.instance.currentUser!.uid, lastWeekStartDay, endTodayDay);
+              
+            },
+            child: Text('Report Generation'),
+          ),
+          ElevatedButton(
+            onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => ChartPage())
               );
             },
             child: Text('Generate Your Viewing Behaviours Report'),
-          )
+          ),
+          ElevatedButton(
+            onPressed: () {
+              List<DateTime> dates = [
+                DateTime(2024, 4, 1),
+                DateTime(2024, 4, 2),
+                DateTime(2024, 4, 3),
+                DateTime(2024, 4, 4),
+                DateTime(2024, 4, 5),
+                DateTime(2024, 4, 6),
+              ];
+              
+              for (int i = 0; i < dates.length; i++){
+                String date = dates[i].toIso8601String().substring(0, 10);
+                db.collection('Users').doc(FirebaseAuth.instance.currentUser!.uid).collection('Report').doc(date).collection('Summary').doc(date).get().then(
+                  (DocumentSnapshot doc) {
+                    if (doc.exists) {
+                      final data = doc.data() as Map<String, dynamic>;
+                      int num = data['Today_watched_video_number'];
+                      print(num);
+                    } else {
+                      print('No such document');
+                    }
+                    
+                  },
+                  onError: (e) => print("Error getting document: $e"),
+                );
+              }
+              
+              
+            },
+            child: Text('test'),
+          ),
         ],
       ),
     );
@@ -80,7 +123,7 @@ class ReportPage extends StatelessWidget {
 
     final metadate = SettableMetadata(contentType: 'json');
     final storageRef = FirebaseStorage.instance.ref();
-    final uploadTask = storageRef.child("Files/$uid/$fileName").putFile(file, metadate);
+    final uploadTask = storageRef.child("Files/$uid/watch-history.json").putFile(file, metadate);
 
     // Listen for state changes, errors, and completion of the upload.
     uploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) {
@@ -109,8 +152,8 @@ class ReportPage extends StatelessWidget {
 
   Future<void> sendCommand(bool handleFile, String userUid) async {
     print('1111111111');
-    final url = Uri.parse('https://sms-app-project-415923.nw.r.appspot.com/api/handle_file');
-    // final url = Uri.parse('http://localhost:5000/api/handle_file');
+    // final url = Uri.parse('https://sms-app-project-415923.nw.r.appspot.com/api/handle_file');
+    final url = Uri.parse('http://localhost:5000/api/handle_file');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -130,8 +173,8 @@ class ReportPage extends StatelessWidget {
 
   Future<void> handleData(bool handleData, String userUid, String startDate, String endDate) async {
     print('77777');
-    final url = Uri.parse('https://sms-app-project-415923.nw.r.appspot.com/api/handle_data');
-    // final url = Uri.parse('http://localhost:5000/api/handle_data');
+    // final url = Uri.parse('https://sms-app-project-415923.nw.r.appspot.com/api/handle_data');
+    final url = Uri.parse('http://localhost:5000/api/handle_data');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -153,17 +196,3 @@ class ReportPage extends StatelessWidget {
 
 }
 
-class ChartPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Viewing Behaviours Report'),
-      ),
-      body: Center(
-        child: Text('This is the Viewing Behaviours Report Page'),
-      ),
-      
-    );
-  }
-}

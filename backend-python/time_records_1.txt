@@ -1,0 +1,52 @@
+Mood Start time: 2024-03-20 15:27:38
+Mood End time: 2024-03-20 15:46:57
+Start time: 2024-03-20 15:27:38
+End time: 2024-03-20 15:46:57
+Mood Start time: 2024-03-20 15:45:31
+Mood End time: 2024-03-20 15:46:57
+Start time: 2024-03-20 15:45:31
+End time: 2024-03-20 15:46:57
+Mood Start time: 2024-03-20 15:47:07
+Mood End time: 2024-03-20 16:31:13
+Start time: 2024-03-20 15:47:07
+End time: 2024-03-20 16:31:13
+Mood Start time: 2024-03-20 16:32:09
+Mood End time: 2024-03-20 16:48:16
+Start time: 2024-03-20 16:32:09
+End time: 2024-03-20 16:48:16
+Mood Start time: 2024-03-20 19:51:16
+Mood End time: 2024-03-20 19:52:01
+Start time: 2024-03-20 19:51:16
+End time: 2024-03-20 19:52:01
+Mood Start time: 2024-03-20 19:55:59
+Mood End time: 2024-03-20 19:58:00
+Start time: 2024-03-20 19:55:59
+End time: 2024-03-20 19:58:00
+Mood Start time: 2024-04-01 11:40:21
+Mood End time: 2024-04-01 11:49:58
+Start time: 2024-04-01 11:40:21
+End time: 2024-04-01 11:49:58
+Mood Start time: 2024-04-06 12:41:42
+Mood End time: 2024-04-06 13:19:55
+Start time: 2024-04-06 12:41:42
+End time: 2024-04-06 13:19:55
+Mood Start time: 2024-04-06 18:55:14
+Mood End time: 2024-04-06 18:56:15
+Start time: 2024-04-06 18:55:14
+End time: 2024-04-06 18:56:15
+Mood Start time: 2024-04-06 19:55:58
+Mood End time: 2024-04-06 20:24:03
+Start time: 2024-04-06 19:55:58
+End time: 2024-04-06 20:24:03
+Mood Start time: 2024-04-07 01:24:02
+Mood End time: 2024-04-07 01:49:14
+Start time: 2024-04-07 01:24:02
+End time: 2024-04-07 01:49:14
+Mood Start time: 2024-04-08 00:47:00
+Mood End time: 2024-04-08 00:55:35
+Start time: 2024-04-08 00:47:00
+End time: 2024-04-08 00:55:35
+Mood Start time: 2024-04-08 01:04:53
+Mood End time: 2024-04-08 01:45:22
+Start time: 2024-04-08 01:04:53
+End time: 2024-04-08 01:45:22
