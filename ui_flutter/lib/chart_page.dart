@@ -109,9 +109,9 @@ class _ChartPageState extends State<ChartPage> {
   }
 
   Future<Map<String, dynamic>> getDetailsForDate(String date) async {
-    Map<String, dynamic> betterData = {'color': '#FF0000'};
-    Map<String, dynamic> sameData = {'color': '#FFFF00'};
-    Map<String, dynamic> worseData = {'color': '#008000'};
+    Map<String, dynamic> betterData = {};
+    Map<String, dynamic> sameData = {};
+    Map<String, dynamic> worseData = {};
 
     final reportDetailsRef = db.collection('Users').doc(FirebaseAuth.instance.currentUser!.uid).collection('Report').doc(date).collection('Details');
     await reportDetailsRef.get().then(
@@ -167,10 +167,6 @@ class _ChartPageState extends State<ChartPage> {
 
   @override
   Widget build(BuildContext context) {
-    // dates = getDates(startLastWeek, endToday);
-    // print(dates);
-    
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Viewing Behaviours Report'),
@@ -243,10 +239,11 @@ class _ChartPageState extends State<ChartPage> {
                         setState(() {
                           if (touchResponse?.spot != null) {
                             final touchedIndex = touchResponse!.spot!.touchedBarGroupIndex;
-                            final xValue = dates[touchedIndex].toString();
+                            final date = dates[touchedIndex];
+                            final xValue = '${date.month}/${date.day}';
                             _selectedBar = SelectedBarInfo(
                               touchResponse!.spot!.touchedBarGroupIndex,
-                              touchResponse.spot!.touchedRodData.toY,
+                              touchResponse.spot!.touchedRodData.toY.toInt(),
                               xValue,
                             );
                             showDetailsDialog(context);
@@ -301,7 +298,6 @@ class _ChartPageState extends State<ChartPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Details'),
           content: SingleChildScrollView( // 如果内容很多，需要滚动
             child: _buildDetailsView(),
           ),
@@ -329,7 +325,7 @@ class _ChartPageState extends State<ChartPage> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'Group: ${_selectedBar!.groupIndex}, Value: ${_selectedBar!.rodValue}',
+          'Date: ${_selectedBar!.xValue}, Total Numbers: ${_selectedBar!.rodValue}',
           style: TextStyle(fontSize: 18),
         ),
         SizedBox(height: 10),
@@ -337,17 +333,7 @@ class _ChartPageState extends State<ChartPage> {
           Color color = getColor(entry.key);
           Map<String, dynamic> statusData = entry.value;
           List<Widget> widgets = [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Row(
-                children: [
-                  Container(width: 20, height: 20, color: getColor(entry.key)), // 使用 getColor 函数获取颜色
-                  // SizedBox(width: 10),
-                  // Text(entry.key, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                ],
-              ),
-            ),
-            ...statusData.entries.where((dataEntry) => dataEntry.key != 'color').map((dataEntry) { // 排除 color 键
+            ...statusData.entries.map((dataEntry) {
               return Padding(
                 padding: const EdgeInsets.only(left: 30.0), // 左边距为对齐
                 child: Row(
@@ -393,7 +379,7 @@ class _ChartPageState extends State<ChartPage> {
 
 class SelectedBarInfo {
   final int groupIndex;
-  final double rodValue;
+  final int rodValue;
   final String xValue;
 
   SelectedBarInfo(this.groupIndex, this.rodValue, this.xValue);
