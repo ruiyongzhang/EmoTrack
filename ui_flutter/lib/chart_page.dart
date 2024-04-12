@@ -184,6 +184,11 @@ class _ChartPageState extends State<ChartPage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double minBarWidth = 50; // 每个数据点的最小宽度
+    double chartWidth = dates.length * minBarWidth;
+    int maxYNum = watchNumber.isNotEmpty ? watchNumber.reduce((a, b) => a > b ? a : b).toInt() + 10 : 10;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Viewing Behaviours Report'),
@@ -283,6 +288,7 @@ class _ChartPageState extends State<ChartPage> {
                                     ElevatedButton(
                                       onPressed: () {
                                         // 确定按钮的功能
+                                        _fetchData(_startDate, _endDate);
                                         Navigator.of(context).pop(); // 关闭弹出页面
                                       },
                                       child: Text('确定'),
@@ -300,116 +306,161 @@ class _ChartPageState extends State<ChartPage> {
               },
               child: Text('Filter'),
             ),
-            Container(
-              padding: EdgeInsets.all(16.0),
-              width: MediaQuery.of(context).size.width * 0.9,
-              height: 300,
-              child: Padding(
-                padding: EdgeInsets.only(bottom: 10.0),
-                child: BarChart(
-                  BarChartData(
-                    gridData: FlGridData(show: false),
-                    titlesData: FlTitlesData(
-                      show: true,
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 30,
-                          getTitlesWidget: (double value, TitleMeta meta) {
-                            final date = dates[value.toInt()];
-                            return SideTitleWidget(
-                              axisSide: meta.axisSide,
-                              child: Text("${date.month}/${date.day}"),
-                            );
-                          },
+            Row(
+              children: [
+                Column(
+                  children: maxYNum >= 5 
+                    ? List.generate(5, (index) {
+                        return Column(
+                          children: [
+                            Text('${(maxYNum / 4 * (4 - index)).round()}',
+                              style: const TextStyle(
+                                color: Color(0xFF999999),
+                                fontSize: 11)
+                              ),
+                            index < 4 ? const SizedBox(height: 50) : const SizedBox()
+                          ],
+                        );
+                      })
+                    : List.generate(maxYNum + 1, (index) {
+                        return Column(
+                          children: [
+                            Text('${maxYNum - index}',
+                              style: const TextStyle(
+                                color: Color(0xFF999999),
+                                fontSize: 11)),
+                            index < maxYNum ? SizedBox(height: (150 / maxYNum).toDouble()) : const SizedBox()
+                          ],
+                        );
+                      })
+                ),
+                const SizedBox(width: 4),
+                const SizedBox(
+                  width: 1,
+                  height: 300,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(color: Color(0xFF999999)),
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Container(
+                      padding: EdgeInsets.all(16.0),
+                      width: chartWidth > screenWidth ? chartWidth : screenWidth,
+                      height: 300,
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 10.0),
+                        child: BarChart(
+                          BarChartData(
+                            gridData: const FlGridData(show: false),
+                            titlesData: FlTitlesData(
+                              show: true,
+                              bottomTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: true,
+                                  reservedSize: 30,
+                                  getTitlesWidget: (double value, TitleMeta meta) {
+                                    final date = dates[value.toInt()];
+                                    return SideTitleWidget(
+                                      axisSide: meta.axisSide,
+                                      child: Text("${date.month}/${date.day}"),
+                                    );
+                                  },
+                                ),
+                              ),
+                              topTitles: const AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: false,
+                                )
+                              ),
+                              rightTitles: const AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: false,
+                                )
+                              ),
+                            ),
+                            borderData: FlBorderData(show: false),
+                            barTouchData: BarTouchData(
+                              enabled: true,
+                              touchTooltipData: BarTouchTooltipData(
+                                // getTooltipColor: Colors.transparent,
+                                tooltipPadding: const EdgeInsets.all(0),
+                                tooltipMargin: 8,
+                                getTooltipItem: (
+                                  BarChartGroupData group,
+                                  int groupIndex,
+                                  BarChartRodData rod,
+                                  int rodIndex,
+                                ) {
+                                  return BarTooltipItem(
+                                    rod.toY.round().toString(),
+                                    const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  );
+                                },
+                              ),
+                              touchCallback: (FlTouchEvent event, BarTouchResponse? touchResponse) {
+                                if (event is! FlTapUpEvent && event is! FlLongPressEnd) {
+                                  return;
+                                }
+                                setState(() {
+                                  if (touchResponse?.spot != null) {
+                                    final touchedIndex = touchResponse!.spot!.touchedBarGroupIndex;
+                                    final date = dates[touchedIndex];
+                                    final xValue = '${date.month}/${date.day}';
+                                    _selectedBar = SelectedBarInfo(
+                                      touchResponse!.spot!.touchedBarGroupIndex,
+                                      touchResponse.spot!.touchedRodData.toY.toInt(),
+                                      xValue,
+                                    );
+                                    showDetailsDialog(context);
+                                  } else {
+                                    _selectedBar = null;
+                                  }
+                                });
+                              },
+                            ),
+                            
+                            // minY: 0,
+                            // maxY: watchNumber.isNotEmpty ? watchNumber.reduce((a, b) => a > b ? a : b).toDouble() + 10 : 10,
+                            barGroups: watchNumber.isNotEmpty ? List.generate(dates.length, (index) {
+                              final ratios = colorRatios[index];
+                              double totalNum = watchNumber[index].toDouble();
+                              double redRatio = ratios["Red"] ?? 0;
+                              double greenRatio = ratios["Green"] ?? 0;
+                              double yellowRatio = ratios["Yellow"] ?? 0;
+                              
+                              double redValue = totalNum * redRatio;
+                              double greenValue = totalNum * greenRatio;
+                              double yellowValue = totalNum * yellowRatio;
+                              
+                              return BarChartGroupData(
+                                x: index,
+                                barRods: [
+                                  BarChartRodData(
+                                    fromY: 0,
+                                    toY: totalNum,
+                                    width: 10,
+                                    rodStackItems: [
+                                      BarChartRodStackItem(0, redValue, Colors.red),
+                                      BarChartRodStackItem(redValue, redValue + yellowValue, Colors.yellow),
+                                      BarChartRodStackItem(redValue + yellowValue, totalNum, Colors.green),
+                                    ]
+                                  ),
+                                ],
+                              );
+                            }) : [],
+                          ),
+                          
                         ),
                       ),
-                      topTitles: const AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: false,
-                        )
-                      ),
-                      rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: false,
-                        )
-                      ),
                     ),
-                    borderData: FlBorderData(show: false),
-                    barTouchData: BarTouchData(
-                      enabled: true,
-                      touchTooltipData: BarTouchTooltipData(
-                        // getTooltipColor: Colors.transparent,
-                        tooltipPadding: const EdgeInsets.all(0),
-                        tooltipMargin: 8,
-                        getTooltipItem: (
-                          BarChartGroupData group,
-                          int groupIndex,
-                          BarChartRodData rod,
-                          int rodIndex,
-                        ) {
-                          return BarTooltipItem(
-                            rod.toY.round().toString(),
-                            const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          );
-                        },
-                      ),
-                      touchCallback: (FlTouchEvent event, BarTouchResponse? touchResponse) {
-                        if (event is! FlTapUpEvent && event is! FlLongPressEnd) {
-                          return;
-                        }
-                        setState(() {
-                          if (touchResponse?.spot != null) {
-                            final touchedIndex = touchResponse!.spot!.touchedBarGroupIndex;
-                            final date = dates[touchedIndex];
-                            final xValue = '${date.month}/${date.day}';
-                            _selectedBar = SelectedBarInfo(
-                              touchResponse!.spot!.touchedBarGroupIndex,
-                              touchResponse.spot!.touchedRodData.toY.toInt(),
-                              xValue,
-                            );
-                            showDetailsDialog(context);
-                          } else {
-                            _selectedBar = null;
-                          }
-                        });
-                      },
-                    ),
-                    
-                    minY: 0,
-                    maxY: watchNumber.isNotEmpty ? watchNumber.reduce((a, b) => a > b ? a : b).toDouble() + 10 : 10,
-                    barGroups: watchNumber.isNotEmpty ? List.generate(dates.length, (index) {
-                      final ratios = colorRatios[index];
-                      double totalNum = watchNumber[index].toDouble();
-                      double redRatio = ratios["Red"] ?? 0;
-                      double greenRatio = ratios["Green"] ?? 0;
-                      double yellowRatio = ratios["Yellow"] ?? 0;
-                      
-                      double redValue = totalNum * redRatio;
-                      double greenValue = totalNum * greenRatio;
-                      double yellowValue = totalNum * yellowRatio;
-                      
-                      return BarChartGroupData(
-                        x: index,
-                        barRods: [
-                          BarChartRodData(
-                            toY: totalNum,
-                            rodStackItems: [
-                              BarChartRodStackItem(0, redValue, Colors.red),
-                              BarChartRodStackItem(redValue, redValue + yellowValue, Colors.yellow),
-                              BarChartRodStackItem(redValue + yellowValue, totalNum, Colors.green),
-                            ]
-                          ),
-                        ],
-                      );
-                    }) : [],
                   ),
-                  
                 ),
-              ),
+              ],
             ),
             Container(
               child: Padding(
@@ -540,7 +591,7 @@ class _ChartPageState extends State<ChartPage> {
     }
   }
 
-  Future<void> _selectDate(BuildContext context, bool isStartDate) async {
+  void _selectDate(BuildContext context, bool isStartDate) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: isStartDate ? _startDate : _endDate, // 根据是开始日期还是结束日期来决定
