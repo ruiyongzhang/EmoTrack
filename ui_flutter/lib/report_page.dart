@@ -18,12 +18,7 @@ import 'chart_page.dart';
 
 final db = FirebaseFirestore.instance;
 
-DateTime now = DateTime.now();
-DateTime startLastWeek = DateTime(now.year, now.month, now.day - 6, 0, 0, 0);
-DateTime endToday = DateTime(now.year, now.month, now.day + 1,0, 0, 0);
 
-String lastWeekStartDay = startLastWeek.toString().substring(0, 19);
-String endTodayDay = endToday.toString().substring(0, 19);
 
 
 
@@ -55,7 +50,12 @@ class ReportPage extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              
+              DateTime now = DateTime.now();
+              DateTime startLastWeek = DateTime(now.year, now.month, now.day - 6, 0, 0, 0);
+              DateTime endToday = DateTime(now.year, now.month, now.day + 1,0, 0, 0);
+
+              String lastWeekStartDay = startLastWeek.toString().substring(0, 19);
+              String endTodayDay = endToday.toString().substring(0, 19);
               print(lastWeekStartDay);
               print(endTodayDay);
               handleData(true, FirebaseAuth.instance.currentUser!.uid, lastWeekStartDay, endTodayDay);
@@ -65,9 +65,18 @@ class ReportPage extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
+              DateTime now = DateTime.now();
+              DateTime startLastWeek = DateTime(now.year, now.month, now.day - 6, 0, 0, 0);
+              DateTime endToday = DateTime(now.year, now.month, now.day + 1,0, 0, 0);
+
+              String lastWeekStartDay = startLastWeek.toString().substring(0, 19);
+              String endTodayDay = endToday.toString().substring(0, 19);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ChartPage())
+                MaterialPageRoute(builder: (context) => ChartPage(
+                  startDate: startLastWeek,
+                  endDate: endToday,
+                ))
               );
             },
             child: Text('Generate Your Viewing Behaviours Report'),
@@ -103,6 +112,12 @@ class ReportPage extends StatelessWidget {
               
             },
             child: Text('test'),
+          ),
+          const TextField(
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Start Date',
+            ),
           ),
         ],
       ),

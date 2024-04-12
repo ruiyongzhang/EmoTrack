@@ -6,23 +6,36 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
+
+import 'multiPicker.dart';
 
 final db = FirebaseFirestore.instance;
 
-DateTime now = DateTime.now();
-DateTime startLastWeek = DateTime.utc(now.year, now.month, now.day - 6, 0, 0, 0);
-DateTime endToday = DateTime.utc(now.year, now.month, now.day);
+// DateTime now = DateTime.now();
+// DateTime startLastWeek = DateTime.utc(now.year, now.month, now.day - 6, 0, 0, 0);
+// DateTime endToday = DateTime.utc(now.year, now.month, now.day);
 
-String lastWeekStartDay = startLastWeek.toString().substring(0, 19);
-String endTodayDay = endToday.toString().substring(0, 19);
+// String lastWeekStartDay = startLastWeek.toString().substring(0, 19);
+// String endTodayDay = endToday.toString().substring(0, 19);
 
 
 class ChartPage extends StatefulWidget {
+  final DateTime startDate;
+  final DateTime endDate;
+  ChartPage({required this.startDate, required this.endDate});
+
   @override
   State<ChartPage> createState() => _ChartPageState();
 }
 
 class _ChartPageState extends State<ChartPage> {
+  late DateTime _startDate;
+  late DateTime _endDate;
+  String _startDateStr = '';
+  String _endDateStr = '';
+
   List<DateTime> dates = [];
   List<int> watchNumber = [];
   List<Map<String, double>> colorRatios = [];
@@ -32,15 +45,19 @@ class _ChartPageState extends State<ChartPage> {
   @override
   void initState() {
     super.initState();
-    _fetchData();
+    _startDate = widget.startDate;
+    _endDate = widget.endDate;
+    _startDateStr = _startDate.toString().substring(0, 10);
+    _endDateStr = _endDate.toString().substring(0, 10);
+    _fetchData(_startDate, _endDate);
   }
 
-  void _fetchData() async {
+  void _fetchData(DateTime startDate, DateTime endDate) async {
     List<int> watchNum = [];
     List<Map<String, double>> moodRatios = [];
     List<Map<String, dynamic>> dayDetailsData = [];
 
-    dates = getDates(startLastWeek, endToday);
+    dates = getDates(startDate, endDate);
     
     for (int i = 0; i < dates.length; i++){
       String date = dates[i].toIso8601String().substring(0, 10);
@@ -175,6 +192,114 @@ class _ChartPageState extends State<ChartPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  PageRouteBuilder(
+                    opaque: false, // 设置为透明的
+                    barrierDismissible: true, // 点击背景时是否可以关闭页面
+                    pageBuilder: (context, _, __) {
+
+                      return Align(
+                        alignment: Alignment.topCenter,
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.6, // 设置高度为屏幕高度的75%
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(25),
+                              bottomRight: Radius.circular(25),
+                            ),
+                            // backgroundBlendMode: BlendMode.dstOver,
+                            
+                          ),
+                          child: Center(
+                            // child: Text('这是从顶部弹出的页面'),
+                            child: SafeArea(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 100.0),
+                                child: Column(
+                                  children: <Widget>[
+                                    Text('Ajust Date Range',
+                                     style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      decoration: TextDecoration.none,
+                                      color: Colors.black,)),
+                                    SizedBox(height: 20),
+                                    // 创建三个并排的按钮
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: <Widget>[
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            // 近1周按钮的功能
+                                          },
+                                          child: Text('近1周'),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            // 近1月按钮的功能
+                                          },
+                                          child: Text('近1月'),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            // 近3月按钮的功能
+                                          },
+                                          child: Text('近3月'),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 20), // 添加一些垂直间隔
+                                    // 创建一行显示两个可点击的日期按钮
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: <Widget>[
+                                        TextButton(
+                                          onPressed: () {
+                                            // 开始日期按钮点击事件，弹出日期选择器
+                                            _selectDate(context, true); // 假设这是开始日期按钮
+                                          },
+                                          child: Text(_startDateStr), // 开始日期变量，格式化为你需要的样式
+                                        ),
+                                        Text(
+                                          '—',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.black87,
+                                            decoration: TextDecoration.none),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            // 结束日期按钮点击事件，弹出日期选择器
+                                            _selectDate(context, false); // 假设这是结束日期按钮
+                                          },
+                                          child: Text(_endDateStr),
+                                        ),
+                                      ],
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        // 确定按钮的功能
+                                        Navigator.of(context).pop(); // 关闭弹出页面
+                                      },
+                                      child: Text('确定'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+              child: Text('Filter'),
+            ),
             Container(
               padding: EdgeInsets.all(16.0),
               width: MediaQuery.of(context).size.width * 0.9,
@@ -286,6 +411,53 @@ class _ChartPageState extends State<ChartPage> {
                 ),
               ),
             ),
+            Container(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 100.0, top: 100.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Row(
+                      // mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          color: Colors.red,
+                          width: 20,
+                          height: 20,
+                        ),
+                        SizedBox(width: 10),
+                        Text('Videos Make You Feel Better'),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      // mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          color: Colors.yellow,
+                          width: 20,
+                          height: 20,
+                        ),
+                        SizedBox(width: 10),
+                        Text('Videos don\'t change your Feeling'),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Container(
+                          color: Colors.green,
+                          width: 20,
+                          height: 20,
+                        ),
+                        SizedBox(width: 10),
+                        Text('Videos Make You Fell Worse'),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         )
       ),
@@ -355,11 +527,6 @@ class _ChartPageState extends State<ChartPage> {
     );
   }
 
-  // Color getColor(String colorStr) {
-  //   String colorValue = '0xFF' + colorStr.substring(1);
-  //   Color color = Color(int.parse(colorValue, radix: 16));
-  //   return color;
-  // }
   Color getColor(String status) {
     switch (status) {
       case 'better':
@@ -373,8 +540,27 @@ class _ChartPageState extends State<ChartPage> {
     }
   }
 
-
-
+  Future<void> _selectDate(BuildContext context, bool isStartDate) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: isStartDate ? _startDate : _endDate, // 根据是开始日期还是结束日期来决定
+      firstDate: DateTime(2000), // 可选择的最早日期
+      lastDate: DateTime(2101), // 可选择的最晚日期
+    );
+    if (picked != null) {
+      setState(() {
+        if (isStartDate) {
+          _startDate = picked; // 更新开始日期变量
+          _startDateStr = _startDate.toString().substring(0, 10);
+        } else {
+          _endDate = picked; // 更新结束日期变量
+          _endDateStr = _endDate.toString().substring(0, 10);
+        }
+      });
+      // 如果需要，可以在这里将日期传输到别的地方
+    }
+  }
+  
 }
 
 class SelectedBarInfo {
