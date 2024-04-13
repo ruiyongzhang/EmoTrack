@@ -1,5 +1,6 @@
 import 'dart:ffi';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart'
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'src/authentication.dart';
 import 'src/widgets.dart';
@@ -18,13 +20,9 @@ import 'chart_page.dart';
 
 final db = FirebaseFirestore.instance;
 
-
-
-
-
-
 class ReportPage extends StatelessWidget {
   // const ReportPage({super.key});
+  DateTime selectedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -119,8 +117,39 @@ class ReportPage extends StatelessWidget {
               labelText: 'Start Date',
             ),
           ),
+          TextButton(
+            onPressed: () {
+              _showCupertinoDatePicker(context);
+            }, 
+            child: Text(selectedDate.toString()),
+          ),
         ],
       ),
+    );
+  }
+
+  void _showCupertinoDatePicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext builder) {
+        return Container(
+          height: MediaQuery.of(context).copyWith().size.height / 3,
+          color: CupertinoColors.systemBackground.resolveFrom(context),
+          child: CupertinoDatePicker(
+            mode: CupertinoDatePickerMode.dateAndTime, // 你可以选择日期(date)、时间(time)或日期和时间(dateAndTime)
+            onDateTimeChanged: (DateTime newDate) {
+              // 这里处理日期时间变更事件
+              print(newDate);
+              selectedDate = newDate;
+              
+            },
+            initialDateTime: DateTime.now(),
+            minimumYear: 2000,
+            maximumYear: DateTime.now().year,
+            use24hFormat: true, // 是否使用24小时格式
+          ),
+        );
+      },
     );
   }
 
