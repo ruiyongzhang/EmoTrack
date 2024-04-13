@@ -188,6 +188,9 @@ class _ChartPageState extends State<ChartPage> {
     double minBarWidth = 50; // 每个数据点的最小宽度
     double chartWidth = dates.length * minBarWidth;
     int maxYNum = watchNumber.isNotEmpty ? watchNumber.reduce((a, b) => a > b ? a : b).toInt() + 10 : 10;
+    bool _isSelected1 = false;
+    bool _isSelected3 = false;
+    bool _isSelected6 = false;
 
     return Scaffold(
       appBar: AppBar(
@@ -204,13 +207,14 @@ class _ChartPageState extends State<ChartPage> {
                     opaque: false, // 设置为透明的
                     barrierDismissible: true, // 点击背景时是否可以关闭页面
                     pageBuilder: (context, _, __) {
+                      DateTime now = DateTime.now();
 
                       return Align(
                         alignment: Alignment.topCenter,
                         child: Container(
                           height: MediaQuery.of(context).size.height * 0.6, // 设置高度为屏幕高度的75%
                           width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(25),
@@ -237,23 +241,74 @@ class _ChartPageState extends State<ChartPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                       children: <Widget>[
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            // 近1周按钮的功能
-                                          },
-                                          child: Text('近1周'),
+                                        SizedBox(
+                                          // width: 100,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              // 近1月按钮的功能
+                                              setState(() {
+                                                _isSelected1 = true;
+                                                _isSelected3 = false;
+                                                _isSelected6 = false;
+                                                _startDate = DateTime(now.year, now.month, now.day).subtract(Duration(days: 30));
+                                                _startDateStr = _startDate.toString().substring(0, 10);
+                                                _endDate = DateTime(now.year, now.month, now.day).add(Duration(days: 1));
+                                                _endDateStr = _endDate.toString().substring(0, 10);
+                                              });
+                                            },
+                                            child: Row(
+                                              children: [
+                                                Text('Last Month'),
+                                                if (_isSelected1) Icon(Icons.check),
+                                              ],
+                                            ),
+                                          ),
                                         ),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            // 近1月按钮的功能
-                                          },
-                                          child: Text('近1月'),
+                                        SizedBox(
+                                          // width: 120,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              // 近3月按钮的功能
+                                              setState(() {
+                                                _isSelected1 = false;
+                                                _isSelected3 = true;
+                                                _isSelected6 = false;
+                                                _startDate = DateTime(now.year, now.month, now.day).subtract(Duration(days: 90));
+                                                _startDateStr = _startDate.toString().substring(0, 10);
+                                                _endDate = DateTime(now.year, now.month, now.day).add(Duration(days: 1));
+                                                _endDateStr = _endDate.toString().substring(0, 10);
+                                              });
+                                            },
+                                            child: Row(
+                                              children: [
+                                                Text('Last 3 Months'),
+                                                if (_isSelected3) Icon(Icons.check),
+                                              ],
+                                            ),
+                                          ),
                                         ),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            // 近3月按钮的功能
-                                          },
-                                          child: Text('近3月'),
+                                        SizedBox(
+                                          // width: 120,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              // 近6月按钮的功能
+                                              setState(() {
+                                                _isSelected1 = false;
+                                                _isSelected3 = false;
+                                                _isSelected6 = true;
+                                                _startDate = DateTime(now.year, now.month, now.day).subtract(Duration(days: 180));
+                                                _startDateStr = _startDate.toString().substring(0, 10);
+                                                _endDate = DateTime(now.year, now.month, now.day).add(Duration(days: 1));
+                                                _endDateStr = _endDate.toString().substring(0, 10);
+                                              });
+                                            },
+                                            child: Row(
+                                              children: [
+                                                Text('Last Half Year'),
+                                                if (_isSelected6) Icon(Icons.check),
+                                              ],
+                                            ),
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -269,7 +324,7 @@ class _ChartPageState extends State<ChartPage> {
                                           },
                                           child: Text(_startDateStr), // 开始日期变量，格式化为你需要的样式
                                         ),
-                                        Text(
+                                        const Text(
                                           '—',
                                           style: TextStyle(
                                             fontSize: 16,
@@ -308,40 +363,6 @@ class _ChartPageState extends State<ChartPage> {
             ),
             Row(
               children: [
-                Column(
-                  children: maxYNum >= 5 
-                    ? List.generate(5, (index) {
-                        return Column(
-                          children: [
-                            Text('${(maxYNum / 4 * (4 - index)).round()}',
-                              style: const TextStyle(
-                                color: Color(0xFF999999),
-                                fontSize: 11)
-                              ),
-                            index < 4 ? const SizedBox(height: 50) : const SizedBox()
-                          ],
-                        );
-                      })
-                    : List.generate(maxYNum + 1, (index) {
-                        return Column(
-                          children: [
-                            Text('${maxYNum - index}',
-                              style: const TextStyle(
-                                color: Color(0xFF999999),
-                                fontSize: 11)),
-                            index < maxYNum ? SizedBox(height: (150 / maxYNum).toDouble()) : const SizedBox()
-                          ],
-                        );
-                      })
-                ),
-                const SizedBox(width: 4),
-                const SizedBox(
-                  width: 1,
-                  height: 300,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(color: Color(0xFF999999)),
-                  ),
-                ),
                 Expanded(
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
