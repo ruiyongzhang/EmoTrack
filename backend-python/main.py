@@ -1,16 +1,20 @@
 from quart import Quart, request, jsonify
+from quart_cors import cors
 
 from upload_to_db import upload_to_db
-# from filter_scrape_categorise import filter_scrape_categorise
 from new_fsc import new_fsc
 from report_generate import report_generate
 
 app = Quart(__name__)
+app = cors(app, 
+           allow_origin="https://sms-app-project-415923.web.app", 
+           allow_methods=["GET", "POST", "OPTIONS"],
+           allow_credentials=True)
 
 # 主页
 @app.route('/')
 def main():
-    return "Hi Flask!"
+    return "Hi Quart!"
 
 @app.route('/api/handle_file', methods=['POST'])
 async def handle_file():
@@ -20,8 +24,7 @@ async def handle_file():
     
     if handle_file:
         upload_to_db(userUid)
-        # handle_file = False
-        # print("Hello, reach here")
+        
         return jsonify({"message": "Handling file..."}), 200
     else:
         return jsonify({"message": "No action taken."}), 200

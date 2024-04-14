@@ -1,4 +1,4 @@
-import 'dart:ffi';
+
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
 import 'src/authentication.dart';
 import 'src/widgets.dart';
@@ -41,7 +42,7 @@ class ReportPage extends StatelessWidget {
             onPressed: () async {
               await uploadFile(FirebaseAuth.instance.currentUser!.uid);
               print('File uploaded');
-              sendCommand(true, FirebaseAuth.instance.currentUser!.uid);
+              await sendCommand(true, FirebaseAuth.instance.currentUser!.uid);
               print('working');
             }, 
             child: Text('Upload File'),
@@ -50,7 +51,7 @@ class ReportPage extends StatelessWidget {
             onPressed: () {
               DateTime now = DateTime.now();
               DateTime startLastWeek = DateTime(now.year, now.month, now.day - 6, 0, 0, 0);
-              DateTime endToday = DateTime(now.year, now.month, now.day + 1,0, 0, 0);
+              DateTime endToday = DateTime(now.year, now.month, now.day + 1, 0, 0, 0);
 
               String lastWeekStartDay = startLastWeek.toString().substring(0, 19);
               String endTodayDay = endToday.toString().substring(0, 19);
@@ -62,13 +63,15 @@ class ReportPage extends StatelessWidget {
             child: Text('Report Generation'),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               DateTime now = DateTime.now();
               DateTime startLastWeek = DateTime(now.year, now.month, now.day - 6, 0, 0, 0);
-              DateTime endToday = DateTime(now.year, now.month, now.day + 1,0, 0, 0);
+              DateTime endToday = DateTime(now.year, now.month, now.day + 1, 0, 0, 0);
 
               String lastWeekStartDay = startLastWeek.toString().substring(0, 19);
               String endTodayDay = endToday.toString().substring(0, 19);
+
+              await handleData(true, FirebaseAuth.instance.currentUser!.uid, lastWeekStartDay, endTodayDay);
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => ChartPage(
@@ -78,50 +81,6 @@ class ReportPage extends StatelessWidget {
               );
             },
             child: Text('Generate Your Viewing Behaviours Report'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              List<DateTime> dates = [
-                DateTime(2024, 4, 1),
-                DateTime(2024, 4, 2),
-                DateTime(2024, 4, 3),
-                DateTime(2024, 4, 4),
-                DateTime(2024, 4, 5),
-                DateTime(2024, 4, 6),
-              ];
-              
-              for (int i = 0; i < dates.length; i++){
-                String date = dates[i].toIso8601String().substring(0, 10);
-                db.collection('Users').doc(FirebaseAuth.instance.currentUser!.uid).collection('Report').doc(date).collection('Summary').doc(date).get().then(
-                  (DocumentSnapshot doc) {
-                    if (doc.exists) {
-                      final data = doc.data() as Map<String, dynamic>;
-                      int num = data['Today_watched_video_number'];
-                      print(num);
-                    } else {
-                      print('No such document');
-                    }
-                    
-                  },
-                  onError: (e) => print("Error getting document: $e"),
-                );
-              }
-              
-              
-            },
-            child: Text('test'),
-          ),
-          const TextField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Start Date',
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              _showCupertinoDatePicker(context);
-            }, 
-            child: Text(selectedDate.toString()),
           ),
         ],
       ),
@@ -159,45 +118,95 @@ class ReportPage extends StatelessWidget {
       type: FileType.custom,
       allowedExtensions: ['json'],
     );
-    final fileName = result!.files.single.name;
-    print(fileName);
-    final filePath = result.files.single.path;
-    final file = File(filePath!);
-    final fileBytes = File(result.files.single.path!).readAsBytesSync();
 
-    final metadate = SettableMetadata(contentType: 'json');
-    final storageRef = FirebaseStorage.instance.ref();
-    final uploadTask = storageRef.child("Files/$uid/watch-history.json").putFile(file, metadate);
+    if (result != null) {
+      PlatformFile file = result.files.first;
+      final storageRef = FirebaseStorage.instance.ref();
 
-    // Listen for state changes, errors, and completion of the upload.
-    uploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) {
-      switch (taskSnapshot.state) {
-        case TaskState.running:
-          final progress =
-              100.0 * (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes);
-          print("Upload is $progress% complete.");
-          break;
-        case TaskState.paused:
-          print("Upload is paused.");
-          break;
-        case TaskState.canceled:
-          print("Upload was canceled");
-          break;
-        case TaskState.error:
-          // Handle unsuccessful uploads
-          break;
-        case TaskState.success:
-          // Handle successful uploads on complete
-          // ...
-          break;
+      if (kIsWeb) {
+        // Use bytes property for web
+        Uint8List? fileBytes = file.bytes;
+        String fileName = file.name;
+        // Do something with the uploaded file bytes and name
+        if (fileBytes != null) {
+          final uploadTask = storageRef.child("Files/$uid/watch-history.json").putData(fileBytes);
+
+          // Listen for state changes, errors, and completion of the upload.
+          uploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) {
+            switch (taskSnapshot.state) {
+              case TaskState.running:
+                final progress =
+                    100.0 * (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes);
+                print("Upload is $progress% complete.");
+                break;
+              case TaskState.paused:
+                print("Upload is paused.");
+                break;
+              case TaskState.canceled:
+                print("Upload was canceled");
+                break;
+              case TaskState.error:
+                // Handle unsuccessful uploads
+                break;
+              case TaskState.success:
+                // Handle successful uploads on complete
+                // ...
+                break;
+            }
+          });
+        } else {
+          print('No file selected or file is empty');
+        }
+      } else {
+        final fileName = result!.files.single.name;
+        print(fileName);
+        final filePath = result.files.single.path;
+        final file = File(filePath!);
+        final fileBytes = File(result.files.single.path!).readAsBytesSync();
+
+        final metadate = SettableMetadata(contentType: 'json');
+        
+        final uploadTask = storageRef.child("Files/$uid/watch-history.json").putFile(file, metadate);
+
+        // Listen for state changes, errors, and completion of the upload.
+        uploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) {
+          switch (taskSnapshot.state) {
+            case TaskState.running:
+              final progress =
+                  100.0 * (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes);
+              print("Upload is $progress% complete.");
+              break;
+            case TaskState.paused:
+              print("Upload is paused.");
+              break;
+            case TaskState.canceled:
+              print("Upload was canceled");
+              break;
+            case TaskState.error:
+              // Handle unsuccessful uploads
+              break;
+            case TaskState.success:
+              // Handle successful uploads on complete
+              // ...
+              break;
+          }
+        });
       }
-    });
+    } else {
+      // User canceled the picker
+      print('User Cancelled Upload');
+    }
+    
+
+    
+
+    
   }
 
   Future<void> sendCommand(bool handleFile, String userUid) async {
     print('1111111111');
-    // final url = Uri.parse('https://sms-app-project-415923.nw.r.appspot.com/api/handle_file');
-    final url = Uri.parse('http://localhost:5000/api/handle_file');
+    final url = Uri.parse('https://sms-app-project-415923.nw.r.appspot.com/api/handle_file');
+    // final url = Uri.parse('http://localhost:5000/api/handle_file');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -217,8 +226,8 @@ class ReportPage extends StatelessWidget {
 
   Future<void> handleData(bool handleData, String userUid, String startDate, String endDate) async {
     print('77777');
-    // final url = Uri.parse('https://sms-app-project-415923.nw.r.appspot.com/api/handle_data');
-    final url = Uri.parse('http://localhost:5000/api/handle_data');
+    final url = Uri.parse('https://sms-app-project-415923.nw.r.appspot.com/api/handle_data');
+    // final url = Uri.parse('http://localhost:5000/api/handle_data');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},

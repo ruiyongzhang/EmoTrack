@@ -8,10 +8,13 @@ from google.api_core.exceptions import DeadlineExceeded
 from googleapiclient.discovery import build
 from urllib.parse import urlparse, parse_qs
 
-
+# YouTube API Key
 api_key = 'AIzaSyBZrV-xxAvaJtjsozjp4vo6WdrEvm8DNH4'
 youtube = build('youtube', 'v3', developerKey=api_key)
-os.environ["OPENAI_API_KEY"] = "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"
+
+# OpenAI API Key
+# os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 
 client = OpenAI(
     # Defaults to os.environ.get("OPENAI_API_KEY")
