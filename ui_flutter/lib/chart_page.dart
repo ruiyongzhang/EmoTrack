@@ -1,5 +1,6 @@
 
 import 'dart:ui';
+import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart'
     hide EmailAuthProvider, PhoneAuthProvider;
 import 'package:firebase_database/firebase_database.dart';
@@ -8,8 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
-import 'multiPicker.dart';
+import 'report_page.dart';
 
 final db = FirebaseFirestore.instance;
 
@@ -47,8 +49,8 @@ class _ChartPageState extends State<ChartPage> {
     super.initState();
     _startDate = widget.startDate;
     _endDate = widget.endDate;
-    _startDateStr = _startDate.toString().substring(0, 10);
-    _endDateStr = _endDate.toString().substring(0, 10);
+    _startDateStr = _startDate.toString().substring(0, 19);
+    _endDateStr = _endDate.toString().substring(0, 19);
     _fetchData(_startDate, _endDate);
   }
 
@@ -206,122 +208,139 @@ class _ChartPageState extends State<ChartPage> {
                     pageBuilder: (context, _, __) {
                       DateTime now = DateTime.now();
 
-                      return Align(
-                        alignment: Alignment.topCenter,
-                        child: Container(
-                          height: MediaQuery.of(context).size.height * 0.6, // 设置高度为屏幕高度的75%
-                          width: MediaQuery.of(context).size.width,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(25),
-                              bottomRight: Radius.circular(25),
+                      return Opacity(
+                        opacity: 0.8,
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.5,
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                              color: Colors.deepOrange[100],
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(25),
+                                bottomRight: Radius.circular(25),
+                              ),
+                              // backgroundBlendMode: BlendMode.dstOver,
+                              
                             ),
-                            // backgroundBlendMode: BlendMode.dstOver,
-                            
-                          ),
-                          child: Center(
-                            // child: Text('这是从顶部弹出的页面'),
-                            child: SafeArea(
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 100.0),
-                                child: Column(
-                                  children: <Widget>[
-                                    Text('Ajust Date Range',
-                                     style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      decoration: TextDecoration.none,
-                                      color: Colors.black,)),
-                                    SizedBox(height: 20),
-                                    // 创建三个并排的按钮
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: <Widget>[
-                                        SizedBox(
-                                          // width: 100,
-                                          child: ElevatedButton(
+                            child: Center(
+                              // child: Text('这是从顶部弹出的页面'),
+                              child: SafeArea(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 50.0),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Text('Time Range',
+                                       style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        decoration: TextDecoration.none,
+                                        color: Colors.black,)),
+                                      SizedBox(height: 20),
+                                      // 创建三个并排的按钮
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: <Widget>[
+                                          ElevatedButton(
                                             onPressed: () {
                                               // 近1月按钮的功能
                                               setState(() {
                                                 _startDate = DateTime(now.year, now.month, now.day).subtract(Duration(days: 30));
-                                                _startDateStr = _startDate.toString().substring(0, 10);
+                                                _startDateStr = _startDate.toString().substring(0, 19);
                                                 _endDate = DateTime(now.year, now.month, now.day).add(Duration(days: 1));
-                                                _endDateStr = _endDate.toString().substring(0, 10);
+                                                _endDateStr = _endDate.toString().substring(0, 19);
                                               });
                                             },
                                             child: Text('Last Month'),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.deepOrange[300],
+                                              foregroundColor: Colors.brown[900],
+                                              alignment: Alignment.center,
+                                              maximumSize: Size(screenWidth * 0.3, 60),
+                                              splashFactory: NoSplash.splashFactory,
+                                              
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          // width: 120,
-                                          child: ElevatedButton(
+                                          ElevatedButton(
                                             onPressed: () {
                                               // 近3月按钮的功能
                                               setState(() {
                                                 _startDate = DateTime(now.year, now.month, now.day).subtract(Duration(days: 90));
-                                                _startDateStr = _startDate.toString().substring(0, 10);
+                                                _startDateStr = _startDate.toString().substring(0, 19);
                                                 _endDate = DateTime(now.year, now.month, now.day).add(Duration(days: 1));
-                                                _endDateStr = _endDate.toString().substring(0, 10);
+                                                _endDateStr = _endDate.toString().substring(0, 19);
                                               });
                                             },
                                             child: Text('Last 3 Months'),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.deepOrange[300],
+                                              foregroundColor: Colors.brown[900],
+                                              alignment: Alignment.center,
+                                              maximumSize: Size(screenWidth * 0.3, 60),
+                                              splashFactory: NoSplash.splashFactory,
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          // width: 120,
-                                          child: ElevatedButton(
+                                          ElevatedButton(
                                             onPressed: () {
                                               // 近6月按钮的功能
                                               setState(() {
                                                 _startDate = DateTime(now.year, now.month, now.day).subtract(Duration(days: 180));
-                                                _startDateStr = _startDate.toString().substring(0, 10);
+                                                _startDateStr = _startDate.toString().substring(0, 19);
                                                 _endDate = DateTime(now.year, now.month, now.day).add(Duration(days: 1));
-                                                _endDateStr = _endDate.toString().substring(0, 10);
+                                                _endDateStr = _endDate.toString().substring(0, 19);
                                               });
                                             },
                                             child: Text('Last Half Year'),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.deepOrange[300],
+                                              foregroundColor: Colors.brown[900],
+                                              alignment: Alignment.center,
+                                              maximumSize: Size(screenWidth * 0.3, 60),
+                                              splashFactory: NoSplash.splashFactory,
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 20), // 添加一些垂直间隔
-                                    // 创建一行显示两个可点击的日期按钮
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: <Widget>[
-                                        TextButton(
-                                          onPressed: () {
-                                            // 开始日期按钮点击事件，弹出日期选择器
-                                            _selectDate(context, true); // 假设这是开始日期按钮
-                                          },
-                                          child: Text(_startDateStr), // 开始日期变量，格式化为你需要的样式
-                                        ),
-                                        const Text(
-                                          '—',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.black87,
-                                            decoration: TextDecoration.none),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            // 结束日期按钮点击事件，弹出日期选择器
-                                            _selectDate(context, false); // 假设这是结束日期按钮
-                                          },
-                                          child: Text(_endDateStr),
-                                        ),
-                                      ],
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        // 确定按钮的功能
-                                        _fetchData(_startDate, _endDate);
-                                        Navigator.of(context).pop(); // 关闭弹出页面
-                                      },
-                                      child: Text('确定'),
-                                    ),
-                                  ],
+                                        ],
+                                      ),
+                                      SizedBox(height: 20), // 添加一些垂直间隔
+                                      // 创建一行显示两个可点击的日期按钮
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              // 开始日期按钮点击事件，弹出日期选择器
+                                              _selectDate(context, true); // 假设这是开始日期按钮
+                                            },
+                                            child: Text(_startDate.toString().substring(0, 10)), // 开始日期变量，格式化为你需要的样式
+                                          ),
+                                          const Text(
+                                            '—',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black87,
+                                              decoration: TextDecoration.none),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              // 结束日期按钮点击事件，弹出日期选择器
+                                              _selectDate(context, false); // 假设这是结束日期按钮
+                                            },
+                                            child: Text(_endDate.toString().substring(0, 10)),
+                                          ),
+                                        ],
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () async {
+                                          // 确定按钮的功能
+                                          await handleData(true, FirebaseAuth.instance.currentUser!.uid, _startDateStr, _endDateStr);
+                                          _fetchData(_startDate, _endDate);
+                                          Navigator.of(context).pop(); // 关闭弹出页面
+                                        },
+                                        child: Text('Confirm'),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -590,22 +609,44 @@ class _ChartPageState extends State<ChartPage> {
       context: context,
       initialDate: isStartDate ? _startDate : _endDate, // 根据是开始日期还是结束日期来决定
       firstDate: DateTime(2000), // 可选择的最早日期
-      lastDate: DateTime(2101), // 可选择的最晚日期
+      lastDate: DateTime.now(), // 可选择的最晚日期
     );
     if (picked != null) {
       setState(() {
         if (isStartDate) {
           _startDate = picked; // 更新开始日期变量
-          _startDateStr = _startDate.toString().substring(0, 10);
+          _startDateStr = _startDate.toString().substring(0, 19);
         } else {
           _endDate = picked; // 更新结束日期变量
-          _endDateStr = _endDate.toString().substring(0, 10);
+          _endDateStr = _endDate.toString().substring(0, 19);
         }
       });
       // 如果需要，可以在这里将日期传输到别的地方
     }
   }
   
+  Future<void> handleData(bool handleData, String userUid, String startDate, String endDate) async {
+    print('666');
+    final url = Uri.parse('https://sms-app-project-415923.nw.r.appspot.com/api/handle_data');
+    // final url = Uri.parse('http://localhost:5000/api/handle_data');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        "handle_data": handleData,
+        "userUid": userUid,
+        "startDate": startDate,
+        "endDate": endDate,
+      }),
+    );
+    print('999');
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      print('Response from server: ${response.body}');
+    } else {
+      print('Failed to send command.');
+    }
+  }
 }
 
 class SelectedBarInfo {

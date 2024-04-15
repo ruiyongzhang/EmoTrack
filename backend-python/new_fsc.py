@@ -45,6 +45,7 @@ async def new_fsc(uid, startDate, endDate):
     video_url = video_url.strip()
         
     if start_time <= watch_time <= end_time:
+      
       if 'description' in video_data and 'category' in video_data:
         if video_data['description'] or video_data['category']:
           print('Already has description and category')
@@ -61,18 +62,18 @@ async def new_fsc(uid, startDate, endDate):
         video_description = 'null'
       
       # Categorise the video with ChatGPT
-      content = "Categorise the YouTube video in one word accoding to its title and description, the title is: " + video_title + " and the description is: " + video_description
+      content =  "The YouTube video has the title: " + str(video_title) + ", and the description: " + str(video_description) + ". Categorise this YouTube video in only ONE word strictly."
       chat_completion = client.chat.completions.create(
-          model="gpt-4",
+          model="gpt-3.5-turbo",
           messages=[{"role": "user", "content": content}]
       )
       video_category = chat_completion.choices[0].message.content
       
       # upload to database
-      history_ref.document(history_doc.id).update({'title':video_title, 'description': video_description, 'category': video_category})
+      history_ref.document(history_doc.id).update({'title': str(video_title), 'description': str(video_description), 'category': str(video_category)})
       
-      print(video_title)
-      print('Upload succeed')
+      print(f'{video_title} Upload succeed!')
+      
   return 'YouTube History Data Updated!'
 
 async def new_scrape_info(url):
@@ -101,7 +102,7 @@ async def new_scrape_info(url):
     return video_title, video_description
   return 'null', 'null'
           
-uid = 'qKtXmGL42mZAfwSYEnsLdDmA1lF2'
-startDate = '2024-03-01 00:00:00'
-endDate = '2024-04-02 00:00:00'
+# uid = 'qKtXmGL42mZAfwSYEnsLdDmA1lF2'
+# startDate = '2024-03-01 00:00:00'
+# endDate = '2024-04-02 00:00:00'
 # new_fsc(uid, startDate, endDate)

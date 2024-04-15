@@ -14,7 +14,7 @@ def convert_time_str(iso_time_str):
 
 def upload_to_db(userUid):
     
-    print('enter first stage')
+    
     gcs_credentials = service_account.Credentials.from_service_account_file("sms-app-project-415923-5cd00cff4d32.json")
     gcs_client = gcs.Client(credentials=gcs_credentials)
     firestore_client = firestore.Client(credentials=gcs_credentials)
@@ -31,7 +31,7 @@ def upload_to_db(userUid):
     blobs = gcs_client.list_blobs(bucket_name, prefix='Files/')
     uids = set([blob.name.split('/')[1] for blob in blobs if '/' in blob.name])
     for uid in uids:
-        print('enter second stage')
+        
         if userUid == str(uid):
             # 枚举指定用户uid文件夹内的所有JSON文件
             user_blobs = bucket.list_blobs(prefix=f'Files/{uid}/')
@@ -41,21 +41,20 @@ def upload_to_db(userUid):
                     json_data = user_blob.download_as_text()
                     data = json.loads(json_data)
                     
-                    # 使用用户uid作为Firestore文档ID，上传JSON内容
-                    history_ref = firestore_client.collection('Users').document(uid).collection('YouTube Watch History')
-                    history_docs = history_ref.stream()
-                    
                     for item in data:
-                        if "title" in item and "titleUrl" in item and "time" in item:
+                        if "titleUrl" in item and "time" in item:
+                            
+                            history_ref = firestore_client.collection('Users').document(uid).collection('YouTube Watch History')
+                            # history_docs = history_ref.stream()
                             # if any(item['time'] == history_doc.id for history_doc in history_docs):
                             #     print('Already uploaded this history!')
                             #     continue
                             
-                            video_info = {'title': item['title'], 'titleUrl': item['titleUrl'], 'time': convert_time_str(item['time'])}
+                            video_info = {'titleUrl': item['titleUrl'], 'time': convert_time_str(item['time'])}
                             doc_name = item['time']
-                            history_ref.document(doc_name).set(video_info)
+                            history_ref.document(doc_name).set(video_info, merge=True)
                     
                             print(f'Uploaded data from {user_blob.name} to Firestore document {doc_name}')
-        # print('Finish one user')
+        print('Finish user ${uid}!')
                 
 # upload_to_db()

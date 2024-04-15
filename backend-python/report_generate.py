@@ -1,7 +1,7 @@
 from google.cloud import firestore
 from google.oauth2 import service_account
 from datetime import datetime, timedelta, timezone
-
+import re
 
 gcs_credentials = service_account.Credentials.from_service_account_file("sms-app-project-415923-5cd00cff4d32.json")
 db = firestore.Client(credentials=gcs_credentials)
@@ -69,10 +69,10 @@ async def report_generate(uid):
           # print(f'watch time: {watch_time}')
           # print('yeahyeahyeah')
           video_category = video_data.get('category', 'null')
-          if video_category in category_counts:
-            category_counts[video_category] += 1
+          if str(video_category) in category_counts:
+            category_counts[str(video_category)] += 1
           else:
-            category_counts[video_category] = 1
+            category_counts[str(video_category)] = 1
       
       update_mood_status(mood_status_counts, mood_date, mood_status)
       
@@ -85,10 +85,12 @@ async def report_generate(uid):
       
       mood_ref.document(mood_doc.id).update({'Status': mood_status})
       
-      report_ref.document(mood_date).collection('Details').document(mood_doc.id).set({'Start Watching Time': mood_start_time, 'Stop Watching Time': mood_end_time, 'Mood Status': mood_status, 'Total watched video number': watch_total_number})
+      report_ref.document(mood_date).collection('Details').document(mood_doc.id).set({'Start Watching Time': mood_start_time, 'Stop Watching Time': mood_end_time, 'Mood Status': mood_status, 'Total watched video number': watch_total_number}, merge=True)
       
       for category, count in category_counts.items():
-        category = category.replace("-", "_")
+        category = re.sub(r'\W+', '', category)
+        # category = str(category.replace("-", "_"))
+        category = str(category)
         report_ref.document(mood_date).collection('Details').document(mood_doc.id).update({category: count})
       
       for mood_date, number in day_watch_number_counts.items():

@@ -20,7 +20,7 @@ class LogInPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('LogIn Page'),
+        title: const Text('Account'),
       ),
       body: ListView(
         children: <Widget>[

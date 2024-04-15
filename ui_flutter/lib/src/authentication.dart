@@ -19,28 +19,42 @@ class AuthFunc extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 24, bottom: 8),
-          child: StyledButton(
-              onPressed: () {
-                !loggedIn ? context.push('/sign-in') : signOut();
-              },
-              child: !loggedIn ? const Text('RSVP') : const Text('Logout')),
+    return SafeArea(
+      child: Center(
+        widthFactor: 12.0,
+        heightFactor: 12.0,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              verticalDirection: VerticalDirection.up,
+              children: [
+                StyledButton(
+                  onPressed: () {
+                    !loggedIn ? context.push('/sign-in') : signOut();
+                  },
+                  child: !loggedIn ? const Text('Enter EmoTrack') : const Text('Logout')
+                ),
+                Visibility(
+                  visible: loggedIn,
+                  child: Row(
+                    children: [
+                      SizedBox(width: 30),
+                      StyledButton(
+                          onPressed: () {
+                            context.push('/profile');
+                          },
+                          child: const Text('Profile')),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ],
         ),
-        Visibility(
-          visible: loggedIn,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 24, bottom: 8),
-            child: StyledButton(
-                onPressed: () {
-                  context.push('/profile');
-                },
-                child: const Text('Profile')),
-          ),
-        )
-      ],
+      ),
     );
   }
 }

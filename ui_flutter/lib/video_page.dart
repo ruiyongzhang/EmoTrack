@@ -194,7 +194,7 @@ class _VideoPageState extends State<VideoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Video Watching Page'),
+        title: const Text('Watching Videos'),
       ),
       body: Column(
         // mainAxisSize: MainAxisSize.min,
