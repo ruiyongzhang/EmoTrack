@@ -425,7 +425,7 @@ class _ChartPageState extends State<ChartPage> {
                                     final date = dates[touchedIndex];
                                     final xValue = '${date.month}/${date.day}';
                                     _selectedBar = SelectedBarInfo(
-                                      touchResponse!.spot!.touchedBarGroupIndex,
+                                      touchResponse.spot!.touchedBarGroupIndex,
                                       touchResponse.spot!.touchedRodData.toY.toInt(),
                                       xValue,
                                     );
