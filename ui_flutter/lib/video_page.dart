@@ -44,8 +44,12 @@ class _VideoPageState extends State<VideoPage> {
     }
   }
 
-  Future<bool> _showDialog() async {
+  Future<void> _showDialog() async {
     _selectedOption = null;
+    setState(() {
+      _isConfirmed = false;
+    });
+    
 
     showDialog(
       context: context,
@@ -104,22 +108,22 @@ class _VideoPageState extends State<VideoPage> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
                 setState(() {
                   _isConfirmed = false;
                 });
+                Navigator.of(context).pop();
               },
               child: Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
-                if (_selectedOption != null) {
-                  saveWatchRecord(_selectedOption!, DateTime.now());
-                }
                 setState(() {
                   _isConfirmed = true;
                 });
+                if (_selectedOption != null) {
+                  saveWatchRecord(_selectedOption!, DateTime.now());
+                }
+                Navigator.of(context).pop();
               },
               child: Text('Confirm'),
             )
@@ -127,47 +131,60 @@ class _VideoPageState extends State<VideoPage> {
         );
       },
     );
-
-    return _isConfirmed;
   }
 
   void _startWatching() async {
+    if (_isConfirmed && _addNewDoc) {
+      setState(() {
+        _isWatching = true;
+      });
+    } else if (!_isConfirmed && _addNewDoc) {
+      setState(() {
+        _isWatching = false;
+      });
+    } else if (_isConfirmed && !_addNewDoc) {
+      setState(() {
+        _isWatching = false;
+      });
+    } else {
+      
+    }
+
     if (!_isWatching) {
       setState(() {
         _addNewDoc = true;
       });
-      _isConfirmed = await _showDialog();
-      if (_isConfirmed) {
-        setState(() {
-          _isWatching = true;
-          _isConfirmed = false;
-        });
-      } else {
-        setState(() {
-          _isWatching = false;
-        });
-      }
+      
+      await _showDialog();
+       
     } else {
       _showAlert('You are already watching.');
     }
   }
 
   void _stopWatching() async {
+    if (!_isConfirmed && _addNewDoc) {
+      setState(() {
+        _isWatching = false;
+      });
+    } else if (_isConfirmed && _addNewDoc) {
+      setState(() {
+        _isWatching = true;
+      });
+    } else if (_isConfirmed && !_addNewDoc) {
+      setState(() {
+        _isWatching = false;
+      });
+    } else {
+
+    }
+
     if (_isWatching) {
       setState(() {
         _addNewDoc = false;
       });
-      _isConfirmed = await _showDialog();
-      if (_isConfirmed) {
-        setState(() {
-          _isWatching = false;
-          _isConfirmed = false;
-        });
-      } else {
-        setState(() {
-          _isWatching = true;
-        });
-      }
+      await _showDialog();
+      
     } else {
       _showAlert('You are not watching anything.');
     }
@@ -202,28 +219,46 @@ class _VideoPageState extends State<VideoPage> {
         children: <Widget>[
           Spacer(flex: 1),
           Center(
-            child: FractionallySizedBox(
-              widthFactor: 2/3,
-              child: ElevatedButton(
-                onPressed:  _startWatching, 
-                child: Text('Start Watching'),
-              ),
+            child: ElevatedButton(
+              onPressed:  _startWatching, 
+              child: Text('Start Watching'),
+              style: ElevatedButton.styleFrom(
+                fixedSize: Size(150, 100),
+                side: BorderSide(
+                  width: 2,
+                  color: Colors.pink,
+                  style: BorderStyle.solid,
+                  strokeAlign:  BorderSide.strokeAlignOutside,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              )
             ),
           ),
           
           // SizedBox(height: 50),
           Spacer(flex: 1),
           Center(
-            child: FractionallySizedBox(
-              widthFactor: 2/3,
-              child: ElevatedButton(
-                onPressed: _stopWatching, 
-                child: Text('Stop Watching'),
-              ),
+            child: ElevatedButton(
+              onPressed: _stopWatching, 
+              child: Text('STOP'),
+              style: ElevatedButton.styleFrom(
+                fixedSize: Size(150, 100),
+                side: BorderSide(
+                  width: 2,
+                  color: Colors.pink,
+                  style: BorderStyle.solid,
+                  strokeAlign:  BorderSide.strokeAlignOutside,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              )
             ),
           ),
           
-          Spacer(flex: 2),
+          Spacer(flex: 1),
         ],
       ),
     );

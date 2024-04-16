@@ -31,6 +31,7 @@ class _ReportPageState extends State<ReportPage> {
   // const ReportPage({super.key});
   DateTime selectedDate = DateTime.now();
   bool _isUploading = false;
+  bool _isGenerating = false;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +55,7 @@ class _ReportPageState extends State<ReportPage> {
                   Text('Instructions'),
                 ],
               ),
+              SizedBox(height: 50),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -64,56 +66,71 @@ class _ReportPageState extends State<ReportPage> {
                   ),
                 ],
               ),
-              
+              SizedBox(height: 50),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    await uploadFile(FirebaseAuth.instance.currentUser!.uid);
+                    print('File uploaded');
+                    
+                    await processFile(true, FirebaseAuth.instance.currentUser!.uid);
+                    print('working');
+                    
+                    setState(() {
+                      _isUploading = false;
+                    });
+                  }, 
+                  child: Text('Upload File'),
+                ),
+              ),
+              if (_isUploading)
+                Center(
+                  child: SpinKitCircle(
+                    color: Colors.blue,
+                    duration: Duration(seconds: 3),
+                    size: 100.0,
+                  ),
+                ),
+              SizedBox(height: 20),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    setState(() {
+                      _isGenerating = true;
+                    });
+                    DateTime now = DateTime.now();
+                    DateTime startLastWeek = DateTime(now.year, now.month, now.day - 6, 0, 0, 0);
+                    DateTime endToday = DateTime(now.year, now.month, now.day);
+                
+                    String lastWeekStartDay = startLastWeek.toString().substring(0, 19);
+                    String endTodayDay = endToday.toString().substring(0, 19);
+                
+                    await handleData(true, FirebaseAuth.instance.currentUser!.uid, lastWeekStartDay, endTodayDay);
+                    setState(() {
+                      _isGenerating = false;
+                    });
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ChartPage(
+                        startDate: startLastWeek,
+                        endDate: endToday,
+                      ))
+                    );
+                  },
+                  child: Text('View Report'),
+                ),
+                
+              ),
+              if (_isGenerating)
+                Center(
+                  child: SpinKitCircle(
+                    color: Colors.pink[300],
+                    duration: Duration(seconds: 3),
+                    size: 100.0,
+                  ),
+                ),
               
             ],
-          ),
-          Center(
-            child: ElevatedButton(
-              onPressed: () async {
-                await uploadFile(FirebaseAuth.instance.currentUser!.uid);
-                print('File uploaded');
-                
-                await processFile(true, FirebaseAuth.instance.currentUser!.uid);
-                print('working');
-                
-                setState(() {
-                  _isUploading = false;
-                });
-              }, 
-              child: Text('Upload File'),
-            ),
-          ),
-          if (_isUploading)
-            Center(
-              child: SpinKitCircle(
-                color: Colors.blue,
-                duration: Duration(milliseconds: 3000),
-                size: 100.0,
-              ),
-            ),
-          SizedBox(height: 20),
-          Center(
-            child: ElevatedButton(
-              onPressed: () async {
-                DateTime now = DateTime.now();
-                DateTime startLastWeek = DateTime(now.year, now.month, now.day - 6, 0, 0, 0);
-                DateTime endToday = DateTime(now.year, now.month, now.day);
-            
-                String lastWeekStartDay = startLastWeek.toString().substring(0, 19);
-                String endTodayDay = endToday.toString().substring(0, 19);
-            
-                await handleData(true, FirebaseAuth.instance.currentUser!.uid, lastWeekStartDay, endTodayDay);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ChartPage(
-                    startDate: startLastWeek,
-                    endDate: endToday,
-                  ))
-                );
-              },
-              child: Text('View Report'),
-            ),
           ),
         ],
       ),
@@ -259,13 +276,18 @@ class _ReportPageState extends State<ReportPage> {
       builder: (context) {
         return AlertDialog(
           title: Text('Instructions'),
-          content: Column(
-            children: [
-              Text('How to download YouTube history'),
-              Text('1. Search Google Takeout'),
-              Text('2. Select YouTube'),
-              Text('3. Download the file in JSON format'),
-            ],
+          content: Padding(
+            padding: const EdgeInsets.only(left: 5.0),
+            child: Column(
+              children: [
+                Text('How to download YouTube history'),
+                Text('1. Search Google Takeout'),
+                Text('2. Select YouTube'),
+                Text('3. Download the file in JSON format'),
+                Text('4. Upload the file here and wait for the report to be generated'),
+                Text('5. After it is loaded successfully, you can press the "View Report" button to view the report'),
+              ],
+            ),
           ),
           actions: <Widget>[
             TextButton(
