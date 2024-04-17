@@ -1,6 +1,7 @@
 
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart'
@@ -11,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -41,32 +41,43 @@ class _ReportPageState extends State<ReportPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Report'),
+        title: const Text(
+          'Report',
+          style: TextStyle(
+            color: Color.fromRGBO(72, 61, 139, 1)
+          ),
+          ),
       ),
       body: ListView(
         children: <Widget>[
-          Text('Upload Your YouTube Watching History and View Your Online Behaviours\' Report Here'),
+          Padding(
+            padding: const EdgeInsets.only(left: 60, right: 50, top: 20, bottom: 20),
+            child: Text(
+              'After uploading your YouTube Watching History here, you can View your Online Behaviours\' Report!',
+              style: TextStyle(
+                color: Color.fromRGBO(72, 61, 139, 0.7),
+                // fontSize: 10,
+              )),
+          ),
           Column(
             children: <Widget>[
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.info_outlined),
-                  Text('Instructions'),
-                ],
-              ),
-              SizedBox(height: 50),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Icon(Icons.question_mark),
                   TextButton(
                     onPressed: () => _showInstructionDialog(context),
-                    child: Text('How to download YouTube history'),
+                    child: Text(
+                      'Instructions',
+                      style: TextStyle(
+                        color: Color.fromRGBO(72, 61, 139, 0.9),
+                        fontSize: 15,
+                      ),
+                    ),
                   ),
                 ],
               ),
-              SizedBox(height: 50),
+              SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
                   onPressed: () async {
@@ -80,7 +91,28 @@ class _ReportPageState extends State<ReportPage> {
                       _isUploading = false;
                     });
                   }, 
-                  child: Text('Upload File'),
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Column(
+                      children: [
+                        Icon(Icons.upload_file, size: 55),
+                        SizedBox(height: 5,),
+                        Text('Upload File', style: TextStyle(fontSize: 15),),
+                      ],
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: Size(150, 120),
+                    side: BorderSide(
+                      width: 2,
+                      color: Color.fromRGBO(72, 61, 139, 0.5),
+                      style: BorderStyle.solid,
+                      strokeAlign:  BorderSide.strokeAlignOutside,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
                 ),
               ),
               if (_isUploading)
@@ -91,7 +123,7 @@ class _ReportPageState extends State<ReportPage> {
                     size: 100.0,
                   ),
                 ),
-              SizedBox(height: 20),
+              SizedBox(height: 50),
               Center(
                 child: ElevatedButton(
                   onPressed: () async {
@@ -117,7 +149,28 @@ class _ReportPageState extends State<ReportPage> {
                       ))
                     );
                   },
-                  child: Text('View Report'),
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: Column(
+                      children: [
+                        Icon(Icons.bar_chart_sharp, size: 60,),
+                        SizedBox(height: 0),
+                        Text('View Report'),
+                      ],
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: Size(150, 120),
+                    side: BorderSide(
+                      width: 2,
+                      color: Color.fromRGBO(72, 61, 139, 0.5),
+                      style: BorderStyle.solid,
+                      strokeAlign:  BorderSide.strokeAlignOutside,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
                 ),
                 
               ),
@@ -275,18 +328,33 @@ class _ReportPageState extends State<ReportPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Instructions'),
-          content: Padding(
-            padding: const EdgeInsets.only(left: 5.0),
-            child: Column(
-              children: [
-                Text('How to download YouTube history'),
-                Text('1. Search Google Takeout'),
-                Text('2. Select YouTube'),
-                Text('3. Download the file in JSON format'),
-                Text('4. Upload the file here and wait for the report to be generated'),
-                Text('5. After it is loaded successfully, you can press the "View Report" button to view the report'),
-              ],
+          title: Text('Instructions', textAlign: TextAlign.center),
+          content: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // RichText(
+                  //   text: TextSpan(
+                  //     children: <TextSpan>[
+                  //       TextSpan(text: '1. Download YouTube history\n'),
+                  //       TextSpan(text: '   - Search Google Takeout\n'),
+                  //       TextSpan(text: '   - Select YouTube and "History"\n'),
+                  //       TextSpan(text: '   - Choose JSON format, export\n and download'),
+                  //       TextSpan(text: '2. Upload the file and wait for the report to be generated\n'),
+                  //       TextSpan(text: '3. After it is loaded successfully, you can press the "View Report" button to view your report!\n'),
+                  //     ]
+                  //   ),
+                  // )
+                  Text('1. Download YouTube history:'),
+                  Text('   - Search Google Takeout'),
+                  Text('   - Select YouTube and "History"'),
+                  Text('   - Choose JSON format, export and download'),
+                  Text('2. Upload the file and wait for the report to be generated'),
+                  Text('3. After it is loaded successfully, you can press the "View Report" button to view your report!'),
+                ],
+              ),
             ),
           ),
           actions: <Widget>[

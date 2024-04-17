@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart'
     hide EmailAuthProvider, PhoneAuthProvider;
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:ui_flutter/main.dart';
 import 'src/authentication.dart';
@@ -211,7 +212,12 @@ class _VideoPageState extends State<VideoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Watching Videos'),
+        title: const Text(
+          'Watching Videos',
+          style: TextStyle(
+            color: Color.fromRGBO(72, 61, 139, 1),
+          ),
+          ),
       ),
       body: Column(
         // mainAxisSize: MainAxisSize.min,
@@ -219,42 +225,80 @@ class _VideoPageState extends State<VideoPage> {
         children: <Widget>[
           Spacer(flex: 1),
           Center(
-            child: ElevatedButton(
-              onPressed:  _startWatching, 
-              child: Text('Start Watching'),
-              style: ElevatedButton.styleFrom(
-                fixedSize: Size(150, 100),
-                side: BorderSide(
-                  width: 2,
-                  color: Colors.pink,
-                  style: BorderStyle.solid,
-                  strokeAlign:  BorderSide.strokeAlignOutside,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 80, right: 60),
+                  child: Text(
+                    'Everytime you want to use YouTube, press the "START" button first!',
+                    style: TextStyle(
+                        color: Color.fromRGBO(72, 61, 139, 0.5),
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      // background: Paint()..color = Colors.pink[400]!,
+                      decoration: TextDecoration.underline,
+                      decorationColor: Colors.purple[200],
+                    ),
+                  ),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed:  _startWatching, 
+                  child: Icon(Icons.play_circle_sharp, size: 50),
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: Size(150, 120),
+                    side: BorderSide(
+                      width: 2,
+                      color: Color.fromRGBO(72, 61, 139, 0.5),
+                      style: BorderStyle.solid,
+                      strokeAlign:  BorderSide.strokeAlignOutside,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  )
                 ),
-              )
+              ],
             ),
           ),
           
           // SizedBox(height: 50),
           Spacer(flex: 1),
           Center(
-            child: ElevatedButton(
-              onPressed: _stopWatching, 
-              child: Text('STOP'),
-              style: ElevatedButton.styleFrom(
-                fixedSize: Size(150, 100),
-                side: BorderSide(
-                  width: 2,
-                  color: Colors.pink,
-                  style: BorderStyle.solid,
-                  strokeAlign:  BorderSide.strokeAlignOutside,
+            child: Column(
+              children: [
+                ElevatedButton(
+                  onPressed: _stopWatching, 
+                  child: Icon(Icons.stop_circle_sharp, size: 50),
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: Size(150, 120),
+                    side: BorderSide(
+                      width: 2,
+                      color: Color.fromRGBO(72, 61, 139, 0.5),
+                      style: BorderStyle.solid,
+                      strokeAlign:  BorderSide.strokeAlignOutside,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  )
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.only(left: 80, right: 60),
+                  child: Text(
+                    'Remember to press "Stop" button after you finish watching!',
+                    style: TextStyle(
+                        color: Color.fromRGBO(72, 61, 139, 0.5),
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      // background: Paint()..color = Colors.pink[400]!,
+                      decoration: TextDecoration.underline,
+                      decorationColor: Colors.purple[200],
+                    ),
+                  ),
                 ),
-              )
+              ],
             ),
           ),
           

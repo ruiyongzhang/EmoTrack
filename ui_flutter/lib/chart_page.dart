@@ -1,4 +1,3 @@
-
 import 'dart:ui';
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart'
@@ -10,6 +9,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'report_page.dart';
 
@@ -43,6 +43,7 @@ class _ChartPageState extends State<ChartPage> {
   List<Map<String, double>> colorRatios = [];
   List<Map<String, dynamic>> dayDetails = [];
   SelectedBarInfo? _selectedBar;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -193,7 +194,7 @@ class _ChartPageState extends State<ChartPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Viewing Behaviours Report'),
+        title: Text('Viewing Report', style: TextStyle(color: Color.fromRGBO(72, 61, 139, 1))),
       ),
       body: Center(
         child: Column(
@@ -216,7 +217,7 @@ class _ChartPageState extends State<ChartPage> {
                             height: MediaQuery.of(context).size.height * 0.5,
                             width: MediaQuery.of(context).size.width,
                             decoration: BoxDecoration(
-                              color: Colors.deepOrange[100],
+                              color: Color.fromRGBO(230, 230, 250, 1),
                               borderRadius: BorderRadius.only(
                                 bottomLeft: Radius.circular(25),
                                 bottomRight: Radius.circular(25),
@@ -231,13 +232,13 @@ class _ChartPageState extends State<ChartPage> {
                                   padding: const EdgeInsets.only(top: 50.0),
                                   child: Column(
                                     children: <Widget>[
-                                      Text('Time Range',
+                                      Text('Edit Time Range',
                                        style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                         decoration: TextDecoration.none,
-                                        color: Colors.black,)),
-                                      SizedBox(height: 20),
+                                        color: Color.fromRGBO(72, 61, 139, 1))),
+                                      SizedBox(height: 30),
                                       // 创建三个并排的按钮
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -252,14 +253,26 @@ class _ChartPageState extends State<ChartPage> {
                                                 _endDateStr = _endDate.toString().substring(0, 19);
                                               });
                                             },
-                                            child: Text('Last Month'),
+                                            child: Ink(
+                                              
+                                              child: InkWell(
+                                                splashColor: Color.fromRGBO(106, 90, 205, 1), // 自定义飞溅颜色
+                                                onTap: () {},
+                                                child: Text(
+                                                  'Last Month', 
+                                                  style: TextStyle(fontSize: 11),
+                                                )
+                                              ),
+                                            ),
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.deepOrange[300],
+                                              backgroundColor: Color.fromRGBO(106, 90, 205, 0.4),
                                               foregroundColor: Colors.brown[900],
                                               alignment: Alignment.center,
-                                              maximumSize: Size(screenWidth * 0.3, 60),
+                                              maximumSize: Size(screenWidth * 0.28, 60),
                                               splashFactory: NoSplash.splashFactory,
-                                              
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
                                             ),
                                           ),
                                           ElevatedButton(
@@ -272,13 +285,16 @@ class _ChartPageState extends State<ChartPage> {
                                                 _endDateStr = _endDate.toString().substring(0, 19);
                                               });
                                             },
-                                            child: Text('Last 3 Months'),
+                                            child: Text('Last 3 Months', style: TextStyle(fontSize: 11)),
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.deepOrange[300],
+                                              backgroundColor: Color.fromRGBO(106, 90, 205, 0.4),
                                               foregroundColor: Colors.brown[900],
                                               alignment: Alignment.center,
-                                              maximumSize: Size(screenWidth * 0.3, 60),
+                                              maximumSize: Size(screenWidth * 0.31, 60),
                                               splashFactory: NoSplash.splashFactory,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
                                             ),
                                           ),
                                           ElevatedButton(
@@ -291,18 +307,24 @@ class _ChartPageState extends State<ChartPage> {
                                                 _endDateStr = _endDate.toString().substring(0, 19);
                                               });
                                             },
-                                            child: Text('Last Half Year'),
+                                            child: Text('Last Half Year', style: TextStyle(fontSize: 11)),
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.deepOrange[300],
+                                              backgroundColor: Color.fromRGBO(106, 90, 205, 0.4),
                                               foregroundColor: Colors.brown[900],
                                               alignment: Alignment.center,
-                                              maximumSize: Size(screenWidth * 0.3, 60),
+                                              maximumSize: Size(screenWidth * 0.31, 60),
                                               splashFactory: NoSplash.splashFactory,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
+                                              side: BorderSide(
+                                                style: BorderStyle.none,
+                                              )
                                             ),
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 20), // 添加一些垂直间隔
+                                      SizedBox(height: 30), // 添加一些垂直间隔
                                       // 创建一行显示两个可点击的日期按钮
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -330,15 +352,30 @@ class _ChartPageState extends State<ChartPage> {
                                           ),
                                         ],
                                       ),
+                                      SizedBox(height: 20),
                                       ElevatedButton(
                                         onPressed: () async {
                                           // 确定按钮的功能
+                                          setState(() {
+                                            _isLoading = true;
+                                          });
                                           await handleData(true, FirebaseAuth.instance.currentUser!.uid, _startDateStr, _endDateStr);
                                           _fetchData(_startDate, _endDate);
+                                          setState(() {
+                                            _isLoading = false;
+                                          });
                                           Navigator.of(context).pop(); // 关闭弹出页面
                                         },
                                         child: Text('Confirm'),
                                       ),
+                                      // if (_isLoading)
+                                      //   Center(
+                                      //     child: SpinKitCircle(
+                                      //       color: Colors.blue,
+                                      //       duration: Duration(seconds: 3),
+                                      //       size: 100.0,
+                                      //     ),
+                                      //   ),
                                     ],
                                   ),
                                 ),
@@ -436,9 +473,8 @@ class _ChartPageState extends State<ChartPage> {
                                 });
                               },
                             ),
-                            
-                            // minY: 0,
-                            // maxY: watchNumber.isNotEmpty ? watchNumber.reduce((a, b) => a > b ? a : b).toDouble() + 10 : 10,
+                            minY: 0,
+                            maxY: watchNumber.isNotEmpty ? watchNumber.reduce((a, b) => a > b ? a : b).toDouble() + 10 : 10,
                             barGroups: watchNumber.isNotEmpty ? List.generate(dates.length, (index) {
                               final ratios = colorRatios[index];
                               double totalNum = watchNumber[index].toDouble();
@@ -477,7 +513,7 @@ class _ChartPageState extends State<ChartPage> {
             ),
             Container(
               child: Padding(
-                padding: const EdgeInsets.only(left: 100.0, top: 100.0),
+                padding: const EdgeInsets.only(left: 80, top: 80),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
