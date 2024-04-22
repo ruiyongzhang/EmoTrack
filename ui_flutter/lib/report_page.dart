@@ -138,6 +138,7 @@ class _ReportPageState extends State<ReportPage> {
                     String endTodayDay = endToday.toString().substring(0, 19);
                 
                     await handleData(true, FirebaseAuth.instance.currentUser!.uid, lastWeekStartDay, endTodayDay);
+                    
                     setState(() {
                       _isGenerating = false;
                     });

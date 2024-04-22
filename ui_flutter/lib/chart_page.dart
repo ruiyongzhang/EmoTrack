@@ -71,24 +71,23 @@ class _ChartPageState extends State<ChartPage> {
       int worseNum = reportSumData['Worse'] ?? 0;
       int sameNum = reportSumData['Same'] ?? 0;
       
-      double redRatio = (betterNum.toDouble() / (betterNum + worseNum + sameNum).toDouble());
+      double greenRatio = (betterNum.toDouble() / (betterNum + worseNum + sameNum).toDouble());
       double yellowRatio = (sameNum.toDouble() / (betterNum + worseNum + sameNum).toDouble());
-      double greenRatio = (worseNum.toDouble() / (betterNum + worseNum + sameNum).toDouble());
+      double redRatio = (worseNum.toDouble() / (betterNum + worseNum + sameNum).toDouble());
       
-      if (redRatio.isNaN) {
-        redRatio = 0;
+      if (greenRatio.isNaN) {
+        greenRatio = 0;
       }
       if (yellowRatio.isNaN) {
         yellowRatio = 0;
       }
-      if (greenRatio.isNaN) {
-        greenRatio = 0;
+      if (redRatio.isNaN) {
+        redRatio = 0;
       }
-      
       moodRatios.add({
-        'Red': redRatio,
-        'Yellow': yellowRatio,
         'Green': greenRatio,
+        'Yellow': yellowRatio,
+        'Red': redRatio,
       });
       print("Finish for $date, watched number is $number");
 
@@ -247,22 +246,15 @@ class _ChartPageState extends State<ChartPage> {
                                             onPressed: () {
                                               // 近1月按钮的功能
                                               setState(() {
-                                                _startDate = DateTime(now.year, now.month, now.day).subtract(Duration(days: 30));
+                                                _startDate = DateTime(now.year, now.month, now.day).subtract(Duration(days: 29));
                                                 _startDateStr = _startDate.toString().substring(0, 19);
-                                                _endDate = DateTime(now.year, now.month, now.day).add(Duration(days: 1));
+                                                _endDate = DateTime(now.year, now.month, now.day);
                                                 _endDateStr = _endDate.toString().substring(0, 19);
                                               });
                                             },
-                                            child: Ink(
-                                              
-                                              child: InkWell(
-                                                splashColor: Color.fromRGBO(106, 90, 205, 1), // 自定义飞溅颜色
-                                                onTap: () {},
-                                                child: Text(
-                                                  'Last Month', 
-                                                  style: TextStyle(fontSize: 11),
-                                                )
-                                              ),
+                                            child: Text(
+                                              'Last Month', 
+                                              style: TextStyle(fontSize: 11),
                                             ),
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Color.fromRGBO(106, 90, 205, 0.4),
@@ -279,9 +271,9 @@ class _ChartPageState extends State<ChartPage> {
                                             onPressed: () {
                                               // 近3月按钮的功能
                                               setState(() {
-                                                _startDate = DateTime(now.year, now.month, now.day).subtract(Duration(days: 90));
+                                                _startDate = DateTime(now.year, now.month, now.day).subtract(Duration(days: 89));
                                                 _startDateStr = _startDate.toString().substring(0, 19);
-                                                _endDate = DateTime(now.year, now.month, now.day).add(Duration(days: 1));
+                                                _endDate = DateTime(now.year, now.month, now.day);
                                                 _endDateStr = _endDate.toString().substring(0, 19);
                                               });
                                             },
@@ -301,9 +293,9 @@ class _ChartPageState extends State<ChartPage> {
                                             onPressed: () {
                                               // 近6月按钮的功能
                                               setState(() {
-                                                _startDate = DateTime(now.year, now.month, now.day).subtract(Duration(days: 180));
+                                                _startDate = DateTime(now.year, now.month, now.day).subtract(Duration(days: 179));
                                                 _startDateStr = _startDate.toString().substring(0, 19);
-                                                _endDate = DateTime(now.year, now.month, now.day).add(Duration(days: 1));
+                                                _endDate = DateTime(now.year, now.month, now.day);
                                                 _endDateStr = _endDate.toString().substring(0, 19);
                                               });
                                             },
@@ -478,14 +470,14 @@ class _ChartPageState extends State<ChartPage> {
                             barGroups: watchNumber.isNotEmpty ? List.generate(dates.length, (index) {
                               final ratios = colorRatios[index];
                               double totalNum = watchNumber[index].toDouble();
-                              double redRatio = ratios["Red"] ?? 0;
                               double greenRatio = ratios["Green"] ?? 0;
                               double yellowRatio = ratios["Yellow"] ?? 0;
+                              double redRatio = ratios["Red"] ?? 0;
                               
-                              double redValue = totalNum * redRatio;
                               double greenValue = totalNum * greenRatio;
                               double yellowValue = totalNum * yellowRatio;
-                              
+                              double redValue = totalNum * redRatio;
+
                               return BarChartGroupData(
                                 x: index,
                                 barRods: [
@@ -494,9 +486,9 @@ class _ChartPageState extends State<ChartPage> {
                                     toY: totalNum,
                                     width: 10,
                                     rodStackItems: [
-                                      BarChartRodStackItem(0, redValue, Colors.red),
-                                      BarChartRodStackItem(redValue, redValue + yellowValue, Colors.yellow),
-                                      BarChartRodStackItem(redValue + yellowValue, totalNum, Colors.green),
+                                      BarChartRodStackItem(0, greenValue, Colors.green),
+                                      BarChartRodStackItem(greenValue, greenValue + yellowValue, Colors.yellow),
+                                      BarChartRodStackItem(greenValue+ yellowValue, totalNum, Colors.red),
                                     ]
                                   ),
                                 ],
@@ -521,7 +513,7 @@ class _ChartPageState extends State<ChartPage> {
                       // mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          color: Colors.red,
+                          color: Colors.green,
                           width: 20,
                           height: 20,
                         ),
@@ -546,7 +538,7 @@ class _ChartPageState extends State<ChartPage> {
                     Row(
                       children: [
                         Container(
-                          color: Colors.green,
+                          color: Colors.red,
                           width: 20,
                           height: 20,
                         ),
@@ -630,11 +622,11 @@ class _ChartPageState extends State<ChartPage> {
   Color getColor(String status) {
     switch (status) {
       case 'better':
-        return Colors.red;
+        return Colors.green;
       case 'same':
         return Colors.yellow;
       case 'worse':
-        return Colors.green;
+        return Colors.red;
       default:
         return Colors.grey;
     }

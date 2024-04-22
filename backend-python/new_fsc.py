@@ -13,8 +13,8 @@ api_key = 'AIzaSyBZrV-xxAvaJtjsozjp4vo6WdrEvm8DNH4'
 youtube = build('youtube', 'v3', developerKey=api_key)
 
 # OpenAI API Key
-# os.environ["OPENAI_API_KEY"] = "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"
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "sk-proj-TxuZmOZLhJsIsnPqnzpCT3BlbkFJ52y9enFVM0Cq0RloMYcZ"
+# os.environ["OPENAI_API_KEY"] = "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"
 
 client = OpenAI(
     # Defaults to os.environ.get("OPENAI_API_KEY")

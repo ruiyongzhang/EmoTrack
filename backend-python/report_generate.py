@@ -85,7 +85,7 @@ async def report_generate(uid):
       
       mood_ref.document(mood_doc.id).update({'Status': mood_status})
       
-      report_ref.document(mood_date).collection('Details').document(mood_doc.id).set({'Start Watching Time': mood_start_time, 'Stop Watching Time': mood_end_time, 'Mood Status': mood_status, 'Total watched video number': watch_total_number}, merge=True)
+      report_ref.document(mood_date).collection('Details').document(mood_doc.id).set({'Start Watching Time': mood_start_time, 'Stop Watching Time': mood_end_time, 'Mood Status': mood_status, 'Total watched video number': watch_total_number})
       
       for category, count in category_counts.items():
         category = re.sub(r'\W+', '', category)
@@ -94,7 +94,7 @@ async def report_generate(uid):
         report_ref.document(mood_date).collection('Details').document(mood_doc.id).update({category: count})
       
       for mood_date, number in day_watch_number_counts.items():
-        report_ref.document(mood_date).collection('Summary').document(mood_date).set({'Today_watched_video_number': number}, merge=True)
+        report_ref.document(mood_date).collection('Summary').document(mood_date).set({'Today_watched_video_number': number})
       
       for mood_date, status_counts in mood_status_counts.items():
         for mood_status, count in status_counts.items():
