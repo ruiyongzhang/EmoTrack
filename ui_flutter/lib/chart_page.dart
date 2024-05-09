@@ -246,9 +246,9 @@ class _ChartPageState extends State<ChartPage> {
                                             onPressed: () {
                                               // 近1月按钮的功能
                                               setState(() {
-                                                _startDate = DateTime(now.year, now.month, now.day).subtract(Duration(days: 29));
+                                                _startDate = DateTime(now.year, now.month, now.day - 29, 0, 0, 0);
                                                 _startDateStr = _startDate.toString().substring(0, 19);
-                                                _endDate = DateTime(now.year, now.month, now.day);
+                                                _endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
                                                 _endDateStr = _endDate.toString().substring(0, 19);
                                               });
                                             },
@@ -271,9 +271,9 @@ class _ChartPageState extends State<ChartPage> {
                                             onPressed: () {
                                               // 近3月按钮的功能
                                               setState(() {
-                                                _startDate = DateTime(now.year, now.month, now.day).subtract(Duration(days: 89));
+                                                _startDate = DateTime(now.year, now.month, now.day - 89, 0, 0, 0);
                                                 _startDateStr = _startDate.toString().substring(0, 19);
-                                                _endDate = DateTime(now.year, now.month, now.day);
+                                                _endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
                                                 _endDateStr = _endDate.toString().substring(0, 19);
                                               });
                                             },
@@ -293,9 +293,9 @@ class _ChartPageState extends State<ChartPage> {
                                             onPressed: () {
                                               // 近6月按钮的功能
                                               setState(() {
-                                                _startDate = DateTime(now.year, now.month, now.day).subtract(Duration(days: 179));
+                                                _startDate = DateTime(now.year, now.month, now.day - 179, 0, 0, 0);
                                                 _startDateStr = _startDate.toString().substring(0, 19);
-                                                _endDate = DateTime(now.year, now.month, now.day);
+                                                _endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
                                                 _endDateStr = _endDate.toString().substring(0, 19);
                                               });
                                             },
@@ -642,10 +642,10 @@ class _ChartPageState extends State<ChartPage> {
     if (picked != null) {
       setState(() {
         if (isStartDate) {
-          _startDate = picked; // 更新开始日期变量
+          _startDate = DateTime(picked.year, picked.month, picked.day, 0, 0, 0); // 更新开始日期变量
           _startDateStr = _startDate.toString().substring(0, 19);
         } else {
-          _endDate = picked; // 更新结束日期变量
+          _endDate = DateTime(picked.year, picked.month, picked.day, 23, 59, 59); // 更新结束日期变量
           _endDateStr = _endDate.toString().substring(0, 19);
         }
       });

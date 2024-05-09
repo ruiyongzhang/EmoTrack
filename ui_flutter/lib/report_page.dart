@@ -50,14 +50,16 @@ class _ReportPageState extends State<ReportPage> {
       ),
       body: ListView(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(left: 60, right: 50, top: 20, bottom: 20),
-            child: Text(
-              'After uploading your YouTube Watching History here, you can View your Online Behaviours\' Report!',
-              style: TextStyle(
-                color: Color.fromRGBO(72, 61, 139, 0.7),
-                // fontSize: 10,
-              )),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 60, right: 50, top: 20, bottom: 20),
+              child: Text(
+                'After uploading your YouTube Watching History here, you can View your Online Behaviours\' Report!',
+                style: TextStyle(
+                  color: Color.fromRGBO(72, 61, 139, 0.7),
+                  // fontSize: 10,
+                )),
+            ),
           ),
           Column(
             children: <Widget>[
@@ -132,7 +134,7 @@ class _ReportPageState extends State<ReportPage> {
                     });
                     DateTime now = DateTime.now();
                     DateTime startLastWeek = DateTime(now.year, now.month, now.day - 6, 0, 0, 0);
-                    DateTime endToday = DateTime(now.year, now.month, now.day);
+                    DateTime endToday = DateTime(now.year, now.month, now.day, 23, 59, 59);
                 
                     String lastWeekStartDay = startLastWeek.toString().substring(0, 19);
                     String endTodayDay = endToday.toString().substring(0, 19);
@@ -336,20 +338,8 @@ class _ReportPageState extends State<ReportPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // RichText(
-                  //   text: TextSpan(
-                  //     children: <TextSpan>[
-                  //       TextSpan(text: '1. Download YouTube history\n'),
-                  //       TextSpan(text: '   - Search Google Takeout\n'),
-                  //       TextSpan(text: '   - Select YouTube and "History"\n'),
-                  //       TextSpan(text: '   - Choose JSON format, export\n and download'),
-                  //       TextSpan(text: '2. Upload the file and wait for the report to be generated\n'),
-                  //       TextSpan(text: '3. After it is loaded successfully, you can press the "View Report" button to view your report!\n'),
-                  //     ]
-                  //   ),
-                  // )
                   Text('1. Download YouTube history:'),
-                  Text('   - Search Google Takeout'),
+                  Text('   - Search Google Takeout (https://takeout.google.com/settings/takeout)'),
                   Text('   - Select YouTube and "History"'),
                   Text('   - Choose JSON format, export and download'),
                   Text('2. Upload the file and wait for the report to be generated'),

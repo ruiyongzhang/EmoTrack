@@ -20,7 +20,7 @@ class LogInPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Account'),
+        title: const Text('Account', style: TextStyle(color: Color.fromRGBO(72, 61, 139, 1))),
       ),
       body: ListView(
         children: <Widget>[

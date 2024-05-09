@@ -28,10 +28,7 @@
     "rewrites": [ {
       "source": "/build/web/**",
       "destination": "/build/web/index.html"
-    }, {
-      "source": "/promos/**",
-      "dynamicLinks": true
-    } ]
+    }]
   },
   "storage": {
     "rules": "storage.rules"
