@@ -103,11 +103,13 @@ Interactive Report (Flutter Charts)
 Update August 2024: Since the free trial of Google App Engine has finished, EmoTrack can no longer run. However, I still leave the User Instructions and the video of how it is running here if anyone is interested.
 
 
-1. **Website version:** The Web version is hosted online and requires no installation. Simply click the link below to start using it directly in your browser: [https://sms-app-project-415923.web.app][website version]
-2. **Android version:** install the Android version by downloading the APK (Android Package) file directly:
-3. **iOS version:** Available on the App Store (link to be provided).
+1. **Website:** The Web version is hosted online and requires no installation. Simply click the link below to start using it directly in your browser: [Link](https://sms-app-project-415923.web.app)
+2. **Android:** Install the Android version by downloading the APK (Android Package) file directly:
+3. **iOS:** This version requires users use type-c cable to download from developer's laptop.
 
 Here is the User Instructions for the EmoTrack: [EmoTrack User Instructions](https://pumped-armchair-5f0.notion.site/EmoTrack-User-Instructions-2bd2a6e1683c45efa0fd9676fa91eaca)
+
+Here is the video of showing how EmoTrack works:
 
 ---
 
@@ -156,7 +158,7 @@ This project was developed as a Master of Engineering dissertation at the **Univ
 ## 📚 Related Publication
 
 For full methodological details, theoretical framework, in-depth analysis, and complete results, please refer to the original dissertation:  
-**"EmoTrack: An application to Facilitate User Reflection on Their Online Behaviours"** – Ruiyong Zhang, University of Bristol, 2024.
+**"EmoTrack: An application to Facilitate User Reflection on Their Online Behaviours"** – Ruiyong Zhang, University of Bristol, 2024. (Not published)
 
 ---
 **⭐ If you find this project interesting or useful, please consider starring the repository!**
