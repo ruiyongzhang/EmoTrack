@@ -1,13 +1,25 @@
-# EmoTrack: Facilitate Reflection on YouTube Watching Behaviours & Mood
+# EmoTrack
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Flutter](https://img.shields.io/badge/Built%20with-Flutter-02569B?logo=flutter)](https://flutter.dev)
-[![Firebase](https://img.shields.io/badge/Backend-Firebase-FFCA28?logo=firebase)](https://firebase.google.com)
-[![Python](https://img.shields.io/badge/Backend-Python-3776AB?logo=python)](https://python.org)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![Flutter](https://img.shields.io/badge/Built%20with-Flutter-02569B?logo=flutter)](https://flutter.dev) [![Firebase](https://img.shields.io/badge/Backend-Firebase-FFCA28?logo=firebase)](https://firebase.google.com) [![Python](https://img.shields.io/badge/Backend-Python-3776AB?logo=python)](https://python.org)
 
 A full-stack, multiplatform Personal Informatics application designed to help users track their YouTube viewing habits, reflect on their emotional responses, and develop healthier online engagement skills.
 
 > **Dissertation Project** – University of Bristol, MEng Computer Science (2024)
+
+---
+
+## ℹ️ Table of Content
+- [🎯 Overview](#-overview)
+- [✨ Key Features](#-key-features)
+- [🧠 Research Foundations](#-research-foundations)
+- [🛠️ Technology Stack](#-technology-stack)
+- [📁 Project Architecture](#-project-architecture)
+- [🚀 Getting Started](#-getting-started)
+- [📊 Evaluation & Results](#-evaluation--results)
+- [🔮 Future Work & Limitations](#-future-work--limitations)
+- [📄 License & Ethics](#-license--ethics)
+- [🙏 Acknowledgements](#-acknowledgements)
+- [📚 Related Thesis](#-related-thesis)
 
 ---
 
@@ -64,7 +76,8 @@ The evaluation demonstrated that EmoTrack successfully facilitated user reflecti
 ---
 
 ## 📁 Project Architecture
-User (Flutter App)
+
+<!-- User (Flutter App)
 │
 ├──► Firebase Auth (Login)
 ├──► Cloud Storage (Upload history.json)
@@ -81,10 +94,13 @@ Python Server (Quart) on Google App Engine
 └──► Data Processing & Report Generation
 │
 ▼
-Interactive Report (Flutter Charts)
+Interactive Report (Flutter Charts) -->
+
+* **Overview of How EmoTrack Works**
+<img src="./assets/images/FlowChart_Overview.png" width="500" />
 
 
-*(See Appendix B of the thesis for a detailed flowchart.)*
+*There is a detailed flowchart [here](./assets/images/FlowChart_details1.png).*
 
 ---
 
@@ -139,9 +155,11 @@ Based on user feedback and research findings:
 
 ---
 
-## 📄 License
+## 📄 License & Ethics
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://choosealicense.com/licenses/mit/) for details.
+
+This project fits within the scope of ethics application 0026, as reviewed by my supervisor, Jon Bird.
 
 ---
 
@@ -149,18 +167,16 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 This project was developed as a Master of Engineering dissertation at the **University of Bristol**, Department of Computer Science.
 
-*   **Supervisor:** Dr. Jon Bird, for his invaluable guidance and support.
+*   **Supervisor:** [Dr. Jon Bird](https://research-information.bris.ac.uk/en/persons/jon-bird/), for his invaluable guidance and support.
 *   **Participants:** Thank you to all user study participants for their time and insightful feedback.
 *   **Technologies:** Built with Flutter, Firebase, Python, and OpenAI APIs.
 
 ---
 
-## 📚 Related Publication
+## 📚 Related Thesis
 
 For full methodological details, theoretical framework, in-depth analysis, and complete results, please refer to the original dissertation:  
-**"EmoTrack: An application to Facilitate User Reflection on Their Online Behaviours"** – Ruiyong Zhang, University of Bristol, 2024. (Not published)
+**"EmoTrack: An application to Facilitate User Reflection on Their Online Behaviours"** – Ruiyong Zhang, University of Bristol, 2024.
 
----
-**⭐ If you find this project interesting or useful, please consider starring the repository!**
 
 [website version]: https://sms-app-project-415923.web.app/
