@@ -107,21 +107,52 @@ Interactive Report (Flutter Charts) -->
 ## 🚀 Getting Started
 
 ### Prerequisites
-*   Flutter SDK (for frontend development)
-*   Python 3.9+ with pip (for backend)
-*   Firebase project with Blaze plan or higher (for Firestore, Auth, Storage)
-*   Google Cloud Project (for App Engine)
-*   OpenAI API key
-*   YouTube Data API v3 key
-
-### Installation & Setup
-
-Update August 2024: Since the free trial of Google App Engine has finished, EmoTrack can no longer run. However, I still leave the User Instructions and the video of how it is running here if anyone is interested.
+* **Flutter SDK** (Latest stable version): [Install Guide](https://docs.flutter.dev/get-started/install)
+* **Python 3.9+**: [Download](https://www.python.org/downloads/)
+* **Firebase CLI**: Required for backend integration.
+* **Google Account**: To export your YouTube history via [Google Takeout](https://takeout.google.com/).
 
 
-1. **Website:** The Web version is hosted online and requires no installation. Simply click the link below to start using it directly in your browser: [Link](https://sms-app-project-415923.web.app)
-2. **Android:** Install the Android version by downloading the APK (Android Package) file directly [here](./ui_flutter/build/app/outputs/apk/release/app-release.apk)
-3. **iOS:** This version requires users use type-c cable to download from developer's laptop.
+<!-- ### Installation & Setup
+1. **Clone the Repository:**
+   ```bash
+   git clone [https://github.com/ruiyongzhang/EmoTrack.git](https://github.com/ruiyongzhang/EmoTrack.git)
+   cd EmoTrack
+   ```
+2. **Install Dependencies:**
+    * Front End Setup:
+        ```bash
+        flutter pub get
+        ```
+    * Back End Setup:
+    The app uses Firebase for Auth and Firestore. You need to link your own Firebase project:
+        1. Create a project in the Firebase Console.
+        2. Enable Authentication (Email/Password) and Cloud Firestore.
+        3. Install the FlutterFire CLI: `dart pub global activate flutterfire_cli`.
+        4. Configure your app:
+        ```bash
+        flutterfire configure
+        ```
+        *This will generate lib/firebase_options.dart with your project keys.*
+
+
+3. **Run the App:**
+    * **Web:** `flutter run -d chrome`
+    * **Mobile:** Connect your device/emulator and run `flutter run` -->
+
+
+
+
+### Deployments
+
+**Run EmoTrack on your device**
+
+ℹ️ *Update August 2024: Since the free trial of Google App Engine has finished, EmoTrack can no longer run. However, I still leave the User Instructions and the video of how it is running here if anyone is interested.*
+
+EmoTrack is available on multiple platforms:
+1. **Website:** The Web version is hosted online and requires no installation. Simply click the [link](https://sms-app-project-415923.web.app) to start using it directly in your browser.
+2. **Android:** Install the Android version by downloading the APK (Android Package) file directly [here](./assets/demos/app-release.apk).
+3. **iOS:** This version is not released so it cannot be found in the AppStore, so users are required to use type-c cable to download from developer's laptop.
 
 Here is the User Instructions for the EmoTrack: [EmoTrack User Instructions](https://pumped-armchair-5f0.notion.site/EmoTrack-User-Instructions-2bd2a6e1683c45efa0fd9676fa91eaca).
 
