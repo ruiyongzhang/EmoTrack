@@ -120,7 +120,7 @@ Update August 2024: Since the free trial of Google App Engine has finished, EmoT
 
 
 1. **Website:** The Web version is hosted online and requires no installation. Simply click the link below to start using it directly in your browser: [Link](https://sms-app-project-415923.web.app)
-2. **Android:** Install the Android version by downloading the APK (Android Package) file directly:
+2. **Android:** Install the Android version by downloading the APK (Android Package) file directly: [Here](/Users/zhangruiyong/app-project/ui_flutter/build/app/outputs/apk/release/app-release.apk)
 3. **iOS:** This version requires users use type-c cable to download from developer's laptop.
 
 Here is the User Instructions for the EmoTrack: [EmoTrack User Instructions](https://pumped-armchair-5f0.notion.site/EmoTrack-User-Instructions-2bd2a6e1683c45efa0fd9676fa91eaca).
