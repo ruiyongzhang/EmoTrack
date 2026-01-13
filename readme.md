@@ -19,7 +19,7 @@ A full-stack, multiplatform Personal Informatics application designed to help us
 - [🔮 Future Work & Limitations](#-future-work--limitations)
 - [📄 License & Ethics](#-license--ethics)
 - [🙏 Acknowledgements](#-acknowledgements)
-- [📚 Related Thesis](#-related-thesis)
+- [📚 Related Documents](#-related-documents)
 
 ---
 
@@ -56,6 +56,7 @@ The evaluation demonstrated that EmoTrack successfully facilitated user reflecti
 *   **R1 (Descriptive Reflection):** Identifying simple patterns (e.g., "I watch more when stressed").
 *   **R2 (Dialogic Reflection):** Questioning habits and exploring different perspectives.
 *   **R3 (Transformative Reflection):** Making conscious changes to viewing behaviour.
+*   **R4 (Critical Reflection):** Not addressed in this iteration; future work may explore societal implications of digital consumption.
 
 ---
 
