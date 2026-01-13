@@ -123,9 +123,9 @@ Update August 2024: Since the free trial of Google App Engine has finished, EmoT
 2. **Android:** Install the Android version by downloading the APK (Android Package) file directly:
 3. **iOS:** This version requires users use type-c cable to download from developer's laptop.
 
-Here is the User Instructions for the EmoTrack: [EmoTrack User Instructions](https://pumped-armchair-5f0.notion.site/EmoTrack-User-Instructions-2bd2a6e1683c45efa0fd9676fa91eaca)
+Here is the User Instructions for the EmoTrack: [EmoTrack User Instructions](https://pumped-armchair-5f0.notion.site/EmoTrack-User-Instructions-2bd2a6e1683c45efa0fd9676fa91eaca).
 
-Here is the video of showing how EmoTrack works:
+Here is the video of showing how EmoTrack works: [EmoTrack Demo Video](https://youtu.be/fgxkX1vDObI).
 
 ---
 
