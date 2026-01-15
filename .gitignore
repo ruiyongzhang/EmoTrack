@@ -38,6 +38,9 @@ coverage
 # Bower dependency directory (https://bower.io/)
 bower_components
 
+# Ignore sensitive service account key
+backend-python/sms-app-project-415923-5cd00cff4d32.json
+
 # node-waf configuration
 .lock-wscript
 
