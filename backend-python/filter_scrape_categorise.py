@@ -15,11 +15,10 @@ from selenium.webdriver.common.by import By
 from selenium.common import TimeoutException
 from selenium.common.exceptions import StaleElementReferenceException, NoSuchElementException, ElementClickInterceptedException
 
-os.environ["OPENAI_API_KEY"] = "xxxxxx"  # Replace with your actual OpenAI API key
 
 client = OpenAI(
     # Defaults to os.environ.get("OPENAI_API_KEY")
-    api_key=os.environ.get("OPENAI_API_KEY") 
+    api_key=os.getenv("OPENAI_API_KEY") 
 )
 
 try:
