@@ -208,7 +208,7 @@ This project was developed as a Master of Engineering dissertation at the **Univ
 ## 📚 Related Documents
 
 For full methodological details, theoretical framework, in-depth analysis, and complete results, please refer to the original dissertation:  
-**"EmoTrack: An application to Facilitate User Reflection on Their Online Behaviours"** – Ruiyong Zhang, University of Bristol, 2024.
+[**"EmoTrack: An application to Facilitate User Reflection on Their Online Behaviours"**](https://arxiv.org/abs/2602.15839) – Ruiyong Zhang, University of Bristol, 2024.
 
 The poster I made for demonstrating on the Poster Day ( April 17, 2024 ) can be found [here](./assets/images/poster.pdf).
 
